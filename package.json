@@ -16,7 +16,10 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "docker:up": "docker-compose up",
+    "docker:down": "docker-compose down",
+    "run:mongo": "docker exec -it mongo-container bash"
   },
   "dependencies": {
     "@nestjs/common": "^7.5.1",
