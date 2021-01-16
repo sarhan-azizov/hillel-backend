@@ -1,4 +1,8 @@
-import { UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import {
+  UnauthorizedException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository, EntityRepository, getMongoRepository } from 'typeorm';
 
 import { UserEntity } from './user.entity';
@@ -19,10 +23,13 @@ export class UserRepository extends Repository<UserEntity> {
     const userRepository = getMongoRepository(UserEntity);
     const foundUser = await userRepository.findOne({
       user: receivedUserDTO.user,
-      password: receivedUserDTO.password,
     });
 
     if (!foundUser) {
+      throw new NotFoundException();
+    }
+
+    if (foundUser.password !== receivedUserDTO.password) {
       throw new UnauthorizedException();
     }
 

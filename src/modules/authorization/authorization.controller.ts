@@ -1,4 +1,6 @@
-import { Controller, Body, Post, Get, Query } from '@nestjs/common';
+import { Controller, Body, Post, Get, Res, Query } from '@nestjs/common';
+import { Response } from 'express';
+import * as JWT from 'jsonwebtoken';
 
 import {
   UserService,
@@ -21,7 +23,19 @@ export class AuthorizationController {
   @Get('authorization')
   public async authorization(
     @Query() receivedUserDto: ReceiveUserDTO,
+    @Res() response: Response,
   ): Promise<UserEntity> {
-    return await this.userService.getUser(receivedUserDto);
+    const foundUser = await this.userService.getUser(receivedUserDto);
+    const tokenPayload = { user: foundUser.user };
+
+    const token = JWT.sign(tokenPayload, process.env.JWT_SECRET_KEY);
+
+    response.set('Authorization', 'Bearer ' + token);
+
+    response.send({
+      foundUser,
+    });
+
+    return foundUser;
   }
 }

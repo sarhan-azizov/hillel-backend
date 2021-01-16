@@ -5,10 +5,9 @@ services:
     image: mongo
     container_name: 'mongo-container'
     restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin
     ports:
       - 27017:27017
     volumes:
       - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    env_file:
+      - .env/.development
