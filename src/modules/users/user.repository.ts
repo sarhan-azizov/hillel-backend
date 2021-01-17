@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Repository, EntityRepository, getMongoRepository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 import { UserEntity } from './user.entity';
 import { CreateUserDTO } from './create-user.dto';
@@ -29,7 +30,11 @@ export class UserRepository extends Repository<UserEntity> {
       throw new NotFoundException();
     }
 
-    if (foundUser.password !== receivedUserDTO.password) {
+    const matchedPassword = await bcrypt.compare(
+      receivedUserDTO.password,
+      foundUser.password,
+    );
+    if (!matchedPassword) {
       throw new UnauthorizedException();
     }
 

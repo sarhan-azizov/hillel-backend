@@ -26,7 +26,7 @@ export class AuthorizationController {
     @Res() response: Response,
   ): Promise<UserEntity> {
     const foundUser = await this.userService.getUser(receivedUserDto);
-    const tokenPayload = { user: foundUser.user };
+    const tokenPayload = {};
 
     const token = JWT.sign(tokenPayload, process.env.JWT_SECRET_KEY);
 
