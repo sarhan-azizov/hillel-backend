@@ -12,6 +12,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+
 import { RoleEntity } from '../roles';
 
 @Entity('users')

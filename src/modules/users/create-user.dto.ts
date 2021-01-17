@@ -1,31 +1,57 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 import {
   IsString,
   IsEmail,
   IsOptional,
   IsNotEmpty,
-  IsMongoId,
+  MinLength,
+  MaxLength,
 } from 'class-validator';
 
 export class CreateUserDTO {
+  @ApiProperty({
+    required: true,
+    maxLength: 80,
+    minLength: 3,
+  })
   @IsString()
   @IsNotEmpty()
+  @MinLength(3)
+  @MaxLength(80)
   user: string;
 
+  @ApiProperty({
+    maxLength: 80,
+    minLength: 3,
+  })
   @IsString()
   @IsOptional()
+  @MaxLength(80)
   firstName: string;
 
+  @ApiProperty({
+    maxLength: 80,
+    minLength: 3,
+  })
   @IsString()
   @IsOptional()
+  @MaxLength(80)
   lastName: string;
 
-  @IsMongoId()
-  role: string;
-
+  @ApiProperty({
+    maxLength: 80,
+    minLength: 5,
+  })
   @IsEmail()
   @IsOptional()
   email: string;
 
+  @ApiProperty({
+    required: true,
+    maxLength: 40,
+    minLength: 5,
+  })
   @IsString()
   @IsNotEmpty()
   password: string;
