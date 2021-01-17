@@ -10,6 +10,8 @@ define(UserEntity, () => {
   adminUser.email = 'admin@gmail.com';
   adminUser.password = 'admin';
   adminUser.activated = true;
+  adminUser.createdAt = new Date();
+  adminUser.updatedAt = new Date();
 
   return adminUser;
 });

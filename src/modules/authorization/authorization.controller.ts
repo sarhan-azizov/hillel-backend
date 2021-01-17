@@ -28,7 +28,9 @@ export class AuthorizationController {
     const foundUser = await this.userService.getUser(receivedUserDto);
     const tokenPayload = {};
 
-    const token = JWT.sign(tokenPayload, process.env.JWT_SECRET_KEY);
+    const token = JWT.sign(tokenPayload, process.env.JWT_SECRET_KEY, {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    });
 
     response.set('Authorization', 'Bearer ' + token);
 

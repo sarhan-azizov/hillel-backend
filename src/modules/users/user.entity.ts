@@ -5,16 +5,14 @@ import {
   ObjectIdColumn,
   BaseEntity,
   BeforeInsert,
+  CreateDateColumn,
+  UpdateDateColumn,
+  BeforeUpdate,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 @Entity('users')
 export class UserEntity extends BaseEntity {
-  constructor() {
-    super();
-    this.activated = false;
-  }
-
   @ObjectIdColumn()
   id: ObjectID;
 
@@ -36,9 +34,30 @@ export class UserEntity extends BaseEntity {
   @Column({ type: 'boolean', nullable: false })
   activated: boolean;
 
+  @CreateDateColumn({ type: 'timestamp', nullable: false })
+  createdAt?: Date;
+
+  @UpdateDateColumn({ type: 'timestamp', nullable: true })
+  updatedAt?: Date;
+
   @BeforeInsert()
   async setPassword(password: string) {
     const salt = await bcrypt.genSalt();
-    this.password = await bcrypt.hash(password, salt);
+    this.password = await bcrypt.hash(password || this.password, salt);
+  }
+
+  @BeforeInsert()
+  async setActivated() {
+    this.activated = false;
+  }
+
+  @BeforeInsert()
+  private setCreateDate(): void {
+    this.createdAt = new Date();
+  }
+
+  @BeforeUpdate()
+  public setUpdateDate(): void {
+    this.updatedAt = new Date();
   }
 }
