@@ -26,7 +26,7 @@ export class CreateUserDTO {
     minLength: 3,
   })
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   @MaxLength(80)
   firstName: string;
 
@@ -35,7 +35,7 @@ export class CreateUserDTO {
     minLength: 3,
   })
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   @MaxLength(80)
   lastName: string;
 
@@ -44,7 +44,7 @@ export class CreateUserDTO {
     minLength: 5,
   })
   @IsEmail()
-  @IsOptional()
+  @IsNotEmpty()
   email: string;
 
   @ApiProperty({

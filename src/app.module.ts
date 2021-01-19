@@ -3,10 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 
 import { AppService } from './app.service';
-import { AuthorizationModule } from './modules/authorization';
+import { AuthorizationModule, UserModule } from './modules';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), AuthorizationModule],
+  imports: [TypeOrmModule.forRoot(), AuthorizationModule, UserModule],
   controllers: [],
   providers: [AppService],
 })

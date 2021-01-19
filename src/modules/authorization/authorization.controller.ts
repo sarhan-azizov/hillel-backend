@@ -1,13 +1,7 @@
-import { Controller, Body, Post, Get, Res, Query } from '@nestjs/common';
+import { Controller, Get, Res, Query } from '@nestjs/common';
 import { Response } from 'express';
 import * as JWT from 'jsonwebtoken';
-import {
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-  ApiQuery,
-  ApiParam,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiQuery } from '@nestjs/swagger';
 
 import {
   UserService,
@@ -20,39 +14,6 @@ import {
 @Controller()
 export class AuthorizationController {
   constructor(private userService: UserService) {}
-
-  @ApiOperation({ summary: 'User registration' })
-  @ApiResponse({
-    status: 201,
-    description: `Return registered user`,
-    type: [CreateUserDTO],
-  })
-  @ApiParam({ name: 'user', type: 'string', description: 'unique user name' })
-  @ApiParam({
-    name: 'firstName',
-    type: 'string',
-    required: false,
-  })
-  @ApiParam({
-    name: 'lastName',
-    type: 'string',
-    required: false,
-  })
-  @ApiParam({
-    name: 'email',
-    type: 'string',
-    required: false,
-  })
-  @ApiParam({
-    name: 'password',
-    type: 'string',
-  })
-  @Post('registration')
-  public async registration(
-    @Body() createUserDTO: CreateUserDTO,
-  ): Promise<UserEntity> {
-    return await this.userService.createUser(createUserDTO);
-  }
 
   @ApiOperation({ summary: 'User authorization' })
   @ApiResponse({
