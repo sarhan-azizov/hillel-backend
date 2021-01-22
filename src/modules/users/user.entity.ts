@@ -21,8 +21,8 @@ export class UserEntity extends BaseEntity {
   id: ObjectID;
 
   @OneToMany((type) => RoleEntity, (role) => role.user, { nullable: true })
-  @JoinColumn()
-  role: RoleEntity;
+  @JoinColumn({ name: 'id' })
+  role: string;
 
   @Column({ type: 'string', unique: true, length: 80, nullable: false })
   user: string;

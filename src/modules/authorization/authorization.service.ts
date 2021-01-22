@@ -32,7 +32,7 @@ export class AuthorizationService {
 
     return {
       user: foundUser.user,
-      role: '1',
+      role: foundUser.role,
     };
   }
 }

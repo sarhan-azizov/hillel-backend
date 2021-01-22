@@ -3,6 +3,7 @@ import { Repository, EntityRepository, getMongoRepository } from 'typeorm';
 
 import { UserEntity } from './user.entity';
 import { CreateUserDTO, GetUserDto } from './dto';
+import { getUserWithRole } from './aggregation';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
@@ -20,14 +21,18 @@ export class UserRepository extends Repository<UserEntity> {
     throw new ConflictException(`The such user ${foundUser.user} is exist.`);
   }
 
-  public async getUser(receivedUserDTO: GetUserDto): Promise<UserEntity> {
-    const foundUser = await this.getUserByUserField(receivedUserDTO.user);
+  public async getUser(getUserDto: GetUserDto): Promise<UserEntity> {
+    const userRepository = getMongoRepository(UserEntity);
+    const foundUserWithRole = await getUserWithRole(
+      userRepository,
+      getUserDto.user,
+    );
 
-    if (!foundUser) {
+    if (!foundUserWithRole) {
       throw new NotFoundException();
     }
 
-    return await this.getUserByUserField(receivedUserDTO.user);
+    return foundUserWithRole;
   }
 
   public async getUserByUserField(user): Promise<UserEntity> {
