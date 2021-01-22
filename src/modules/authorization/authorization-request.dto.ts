@@ -1,7 +1,8 @@
-import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ReceiveUserDTO {
+import { IsString, IsNotEmpty, MinLength, MaxLength } from 'class-validator';
+
+export class AuthorizationRequestDTO {
   @ApiProperty({
     required: true,
     maxLength: 80,
@@ -9,8 +10,8 @@ export class ReceiveUserDTO {
   })
   @IsString()
   @IsNotEmpty()
-  @MinLength(3)
   @MaxLength(80)
+  @MinLength(3)
   user: string;
 
   @ApiProperty({

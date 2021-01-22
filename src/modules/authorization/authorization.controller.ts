@@ -1,34 +1,33 @@
+import { ApiOperation, ApiResponse, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { Controller, Get, Res, Query } from '@nestjs/common';
 import { Response } from 'express';
 import * as JWT from 'jsonwebtoken';
-import { ApiOperation, ApiResponse, ApiTags, ApiQuery } from '@nestjs/swagger';
 
-import {
-  UserService,
-  UserEntity,
-  CreateUserDTO,
-  ReceiveUserDTO,
-} from '../users';
+import { AuthorizationRequestDTO } from './authorization-request.dto';
+import { AuthorizationResponseDTO } from './authorization-response.dto';
+import { AuthorizationService } from './authorization.service';
 
 @ApiTags('Authorization')
 @Controller()
 export class AuthorizationController {
-  constructor(private userService: UserService) {}
+  constructor(private authorizationService: AuthorizationService) {}
 
-  @ApiOperation({ summary: 'User authorization' })
+  @ApiOperation({ summary: 'Authorization' })
   @ApiResponse({
     status: 200,
     description: `Return authorized user`,
-    type: [CreateUserDTO],
+    type: [AuthorizationRequestDTO],
   })
   @ApiQuery({ name: 'user', type: 'string' })
   @ApiQuery({ name: 'password', type: 'string' })
   @Get('authorization')
   public async authorization(
-    @Query() receivedUserDto: ReceiveUserDTO,
+    @Query() authorizationRequestDTO: AuthorizationRequestDTO,
     @Res() response: Response,
-  ): Promise<UserEntity> {
-    const foundUser = await this.userService.getUser(receivedUserDto);
+  ): Promise<AuthorizationResponseDTO> {
+    const authorizedUser: AuthorizationResponseDTO = await this.authorizationService.authorize(
+      authorizationRequestDTO,
+    );
     const tokenPayload = {};
 
     const token = JWT.sign(tokenPayload, process.env.JWT_SECRET_KEY, {
@@ -37,10 +36,8 @@ export class AuthorizationController {
 
     response.set('Authorization', 'Bearer ' + token);
 
-    response.send({
-      foundUser,
-    });
+    response.send(authorizedUser);
 
-    return foundUser;
+    return authorizedUser;
   }
 }

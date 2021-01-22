@@ -3,13 +3,12 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
   IsEmail,
-  IsOptional,
   IsNotEmpty,
   MinLength,
   MaxLength,
 } from 'class-validator';
 
-export class CreateUserDTO {
+export class RegistrationRequestDTO {
   @ApiProperty({
     required: true,
     maxLength: 80,

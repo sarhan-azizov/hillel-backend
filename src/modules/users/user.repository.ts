@@ -1,46 +1,40 @@
-import {
-  UnauthorizedException,
-  ForbiddenException,
-  NotFoundException,
-} from '@nestjs/common';
+import { NotFoundException, ConflictException } from '@nestjs/common';
 import { Repository, EntityRepository, getMongoRepository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
 
 import { UserEntity } from './user.entity';
-import { CreateUserDTO } from './create-user.dto';
-import { ReceiveUserDTO } from './receive-user.dto';
+import { CreateUserDTO, GetUserDto } from './dto';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
   public async createUser(createUserDTO: CreateUserDTO): Promise<UserEntity> {
-    const createdUser = Object.assign(new UserEntity(), createUserDTO);
+    const foundUser = await this.getUserByUserField(createUserDTO.user);
 
-    await createdUser.save();
+    if (!foundUser) {
+      const createdUser = Object.assign(new UserEntity(), createUserDTO);
 
-    return createdUser;
+      await createdUser.save();
+
+      return createdUser;
+    }
+
+    throw new ConflictException(`The such user ${foundUser.user} is exist.`);
   }
 
-  public async getUser(receivedUserDTO: ReceiveUserDTO): Promise<UserEntity> {
-    const userRepository = getMongoRepository(UserEntity);
-    const foundUser = await userRepository.findOne({
-      user: receivedUserDTO.user,
-    });
+  public async getUser(receivedUserDTO: GetUserDto): Promise<UserEntity> {
+    const foundUser = await this.getUserByUserField(receivedUserDTO.user);
 
     if (!foundUser) {
       throw new NotFoundException();
     }
 
-    const matchedPassword = await bcrypt.compare(
-      receivedUserDTO.password,
-      foundUser.password,
-    );
-    if (!matchedPassword) {
-      throw new UnauthorizedException();
-    }
+    return await this.getUserByUserField(receivedUserDTO.user);
+  }
 
-    if (!foundUser.activated) {
-      throw new ForbiddenException();
-    }
+  public async getUserByUserField(user): Promise<UserEntity> {
+    const userRepository = getMongoRepository(UserEntity);
+    const foundUser = await userRepository.findOne({
+      user,
+    });
 
     return foundUser;
   }
