@@ -16,7 +16,7 @@ export class AuthorizationController {
   @ApiResponse({
     status: 200,
     description: `Return authorized user`,
-    type: [AuthorizationRequestDTO],
+    type: [AuthorizationResponseDTO],
   })
   @ApiQuery({ name: 'user', type: 'string' })
   @ApiQuery({ name: 'password', type: 'string' })

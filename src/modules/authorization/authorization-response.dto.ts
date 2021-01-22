@@ -20,6 +20,10 @@ export class AuthorizationResponseDTO {
   @MaxLength(80)
   user: string;
 
+  @ApiProperty({
+    required: true,
+    enum: [UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.STUDENT],
+  })
   @IsEnum([UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.STUDENT])
   role: string;
 }
