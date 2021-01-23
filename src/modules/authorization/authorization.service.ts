@@ -4,6 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import * as JWT from 'jsonwebtoken';
 
 import { UserService } from '../users';
 import { AuthorizationRequestDTO } from './authorization-request.dto';
@@ -31,9 +32,15 @@ export class AuthorizationService {
       throw new ForbiddenException();
     }
 
-    return {
+    const tokenPayload = {
       username: foundUser.username,
       role: foundUser.role,
     };
+
+    const token = JWT.sign(tokenPayload, process.env.JWT_SECRET_KEY, {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    });
+
+    return token;
   }
 }
