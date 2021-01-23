@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 
-import { AppService } from './app.service';
 import { AuthorizationModule, RegistrationModule, UserModule } from './modules';
 
 @Module({
@@ -13,7 +12,7 @@ import { AuthorizationModule, RegistrationModule, UserModule } from './modules';
     AuthorizationModule,
   ],
   controllers: [],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {
   constructor(private connection: Connection) {}

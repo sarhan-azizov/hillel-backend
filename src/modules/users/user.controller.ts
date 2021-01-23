@@ -1,8 +1,19 @@
 import { Controller, Body, Post, Query, Get } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiParam,
+  ApiBody,
+} from '@nestjs/swagger';
 
 import { UserService } from './user.service';
-import { CreateUserDTO, GetUserDto } from './dto';
+import {
+  CreateUserRequestDTO,
+  CreateUserResponseDTO,
+  GetUserResponseDTO,
+  GetUserRequestDTO,
+} from './dto';
 import { UserEntity } from './user.entity';
 
 @ApiTags('Users')
@@ -11,46 +22,21 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @ApiOperation({ summary: 'Users' })
+  @ApiBody({ type: CreateUserRequestDTO })
   @ApiResponse({
     status: 201,
     description: `Return created user`,
-    type: [CreateUserDTO],
-  })
-  @ApiParam({
-    name: 'user',
-    type: 'string',
-    description: 'the username is unique ',
-  })
-  @ApiParam({
-    name: 'firstName',
-    type: 'string',
-  })
-  @ApiParam({
-    name: 'lastName',
-    type: 'string',
-  })
-  @ApiParam({
-    name: 'email',
-    type: 'string',
-  })
-  @ApiParam({
-    name: 'password',
-    type: 'string',
+    type: CreateUserResponseDTO,
   })
   @Post()
   public async createUser(
-    @Body() createUserDTO: CreateUserDTO,
+    @Body() createUserRequestDTO: CreateUserRequestDTO,
   ): Promise<UserEntity> {
-    return await this.userService.createUser(createUserDTO);
+    return await this.userService.createUser(createUserRequestDTO);
   }
 
-  @ApiResponse({
-    status: 200,
-    description: `Return all users`,
-    type: [CreateUserDTO],
-  })
   @ApiParam({
-    name: 'user',
+    name: 'username',
     type: 'string',
     description: 'the username is unique ',
   })
@@ -71,7 +57,9 @@ export class UserController {
     type: 'string',
   })
   @Get()
-  public async getUsers(@Query() getUserDto: GetUserDto): Promise<UserEntity> {
-    return await this.userService.getUser(getUserDto);
+  public async getUsers(
+    @Query() getUserRequestDTO: GetUserRequestDTO,
+  ): Promise<UserEntity> {
+    return await this.userService.getUser(getUserRequestDTO);
   }
 }

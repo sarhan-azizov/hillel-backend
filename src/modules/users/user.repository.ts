@@ -2,30 +2,38 @@ import { NotFoundException, ConflictException } from '@nestjs/common';
 import { Repository, EntityRepository, getMongoRepository } from 'typeorm';
 
 import { UserEntity } from './user.entity';
-import { CreateUserDTO, GetUserDto } from './dto';
+import { CreateUserRequestDTO, GetUserRequestDTO } from './dto';
 import { getUserWithRole } from './aggregation';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
-  public async createUser(createUserDTO: CreateUserDTO): Promise<UserEntity> {
-    const foundUser = await this.getUserByUserField(createUserDTO.user);
+  public async createUser(
+    createUserRequestDTO: CreateUserRequestDTO,
+  ): Promise<UserEntity> {
+    const foundUser = await this.getUserByUserField(
+      createUserRequestDTO.username,
+    );
 
     if (!foundUser) {
-      const createdUser = Object.assign(new UserEntity(), createUserDTO);
+      const createdUser = Object.assign(new UserEntity(), createUserRequestDTO);
 
       await createdUser.save();
 
       return createdUser;
     }
 
-    throw new ConflictException(`The such user ${foundUser.user} is exist.`);
+    throw new ConflictException(
+      `The such user ${foundUser.username} is exist.`,
+    );
   }
 
-  public async getUser(getUserDto: GetUserDto): Promise<UserEntity> {
+  public async getUser(
+    getUserRequestDTO: GetUserRequestDTO,
+  ): Promise<UserEntity> {
     const userRepository = getMongoRepository(UserEntity);
     const foundUserWithRole = await getUserWithRole(
       userRepository,
-      getUserDto.user,
+      getUserRequestDTO.username,
     );
 
     if (!foundUserWithRole) {
@@ -35,10 +43,10 @@ export class UserRepository extends Repository<UserEntity> {
     return foundUserWithRole;
   }
 
-  public async getUserByUserField(user): Promise<UserEntity> {
+  public async getUserByUserField(username): Promise<UserEntity> {
     const userRepository = getMongoRepository(UserEntity);
     const foundUser = await userRepository.findOne({
-      user,
+      username,
     });
 
     return foundUser;

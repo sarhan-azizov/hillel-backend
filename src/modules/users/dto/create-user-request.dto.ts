@@ -8,7 +8,7 @@ import {
   MaxLength,
 } from 'class-validator';
 
-export class CreateUserDTO {
+export class CreateUserRequestDTO {
   @ApiProperty({
     required: true,
     maxLength: 80,
@@ -18,7 +18,7 @@ export class CreateUserDTO {
   @IsNotEmpty()
   @MinLength(3)
   @MaxLength(80)
-  user: string;
+  username: string;
 
   @ApiProperty({
     maxLength: 80,

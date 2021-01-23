@@ -18,7 +18,7 @@ export class RegistrationRequestDTO {
   @IsNotEmpty()
   @MinLength(3)
   @MaxLength(80)
-  user: string;
+  username: string;
 
   @ApiProperty({
     maxLength: 80,

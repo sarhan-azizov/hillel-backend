@@ -1,9 +1,9 @@
-export const getUserWithRole = async (userRepository, user) => {
+export const getUserWithRole = async (userRepository, username) => {
   const getUserWithRole = await userRepository
     .aggregate([
       {
         $match: {
-          user,
+          username,
         },
       },
       {

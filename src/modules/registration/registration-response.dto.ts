@@ -13,6 +13,7 @@ import {
 export class RegistrationResponseDTO {
   @ApiProperty({
     required: true,
+    type: String,
   })
   @IsMongoId()
   id: ObjectID;
@@ -26,7 +27,7 @@ export class RegistrationResponseDTO {
   @IsNotEmpty()
   @MinLength(3)
   @MaxLength(80)
-  user: string;
+  username: string;
 
   @ApiProperty({
     maxLength: 80,

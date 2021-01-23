@@ -13,13 +13,13 @@ export class AuthorizationController {
   constructor(private authorizationService: AuthorizationService) {}
 
   @ApiOperation({ summary: 'Authorization' })
+  @ApiQuery({ name: 'username', type: 'string' })
+  @ApiQuery({ name: 'password', type: 'string' })
   @ApiResponse({
     status: 200,
     description: `Return authorized user`,
-    type: [AuthorizationResponseDTO],
+    type: AuthorizationResponseDTO,
   })
-  @ApiQuery({ name: 'user', type: 'string' })
-  @ApiQuery({ name: 'password', type: 'string' })
   @Get('authorization')
   public async authorization(
     @Query() authorizationRequestDTO: AuthorizationRequestDTO,
@@ -36,7 +36,10 @@ export class AuthorizationController {
 
     response.set('Authorization', 'Bearer ' + token);
 
-    response.send(authorizedUser);
+    response.send({
+      username: authorizedUser.username,
+      role: authorizedUser.role,
+    });
 
     return authorizedUser;
   }

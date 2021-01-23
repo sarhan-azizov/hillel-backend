@@ -25,7 +25,7 @@ export class UserEntity extends BaseEntity {
   role: string;
 
   @Column({ type: 'string', unique: true, length: 80, nullable: false })
-  user: string;
+  username: string;
 
   @Column({ type: 'string', length: 80, nullable: true })
   firstName: string;
@@ -50,6 +50,7 @@ export class UserEntity extends BaseEntity {
 
   @BeforeInsert()
   async setPassword(password: string) {
+    console.log(this);
     const salt = await bcrypt.genSalt();
     this.password = await bcrypt.hash(password || this.password, salt);
   }

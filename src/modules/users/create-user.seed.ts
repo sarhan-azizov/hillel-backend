@@ -18,7 +18,7 @@ export default class CreateUser implements Seeder {
 
     await userRepository.insertMany([
       {
-        user: process.env.ADMIN_USER_NAME,
+        username: process.env.ADMIN_USER_NAME,
         role: adminRole.id,
         firstName: 'admin',
         lastName: 'admin',

@@ -1,6 +1,10 @@
-import { UserModule } from './user.module';
-import { UserService } from './user.service';
-import { UserEntity } from './user.entity';
-import { CreateUserDTO, GetUserDto } from './dto';
+export { UserModule } from './user.module';
+export { UserService } from './user.service';
+export { UserEntity } from './user.entity';
 
-export { UserModule, UserService, UserEntity, CreateUserDTO, GetUserDto };
+export {
+  CreateUserRequestDTO,
+  CreateUserResponseDTO,
+  GetUserRequestDTO,
+  GetUserResponseDTO,
+} from './dto';

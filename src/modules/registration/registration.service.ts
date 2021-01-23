@@ -17,7 +17,7 @@ export class RegistrationService {
 
     return {
       id: registeredUser.id,
-      user: registeredUser.user,
+      username: registeredUser.username,
       firstName: registeredUser.firstName,
       lastName: registeredUser.lastName,
       email: registeredUser.email,

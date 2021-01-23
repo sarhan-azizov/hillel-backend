@@ -12,7 +12,7 @@ export class AuthorizationRequestDTO {
   @IsNotEmpty()
   @MaxLength(80)
   @MinLength(3)
-  user: string;
+  username: string;
 
   @ApiProperty({
     required: true,
