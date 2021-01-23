@@ -23,4 +23,8 @@ export class UserService {
   ): Promise<UserEntity> {
     return await this.userRepository.getUser(getUserRequestDTO);
   }
+
+  public async getUsers(): Promise<Array<UserEntity>> {
+    return await this.userRepository.getUsers();
+  }
 }

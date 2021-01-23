@@ -17,8 +17,7 @@ export class AuthorizationController {
   @ApiQuery({ name: 'password', type: 'string' })
   @ApiResponse({
     status: 200,
-    description: `Return authorized user`,
-    type: AuthorizationResponseDTO,
+    description: `Return authorized token`,
   })
   @Get('authorization')
   public async authorization(
@@ -28,7 +27,10 @@ export class AuthorizationController {
     const authorizedUser: AuthorizationResponseDTO = await this.authorizationService.authorize(
       authorizationRequestDTO,
     );
-    const tokenPayload = {};
+    const tokenPayload = {
+      username: authorizedUser.username,
+      role: authorizedUser.role,
+    };
 
     const token = JWT.sign(tokenPayload, process.env.JWT_SECRET_KEY, {
       expiresIn: process.env.JWT_EXPIRES_IN,
@@ -37,8 +39,7 @@ export class AuthorizationController {
     response.set('Authorization', 'Bearer ' + token);
 
     response.send({
-      username: authorizedUser.username,
-      role: authorizedUser.role,
+      token,
     });
 
     return authorizedUser;

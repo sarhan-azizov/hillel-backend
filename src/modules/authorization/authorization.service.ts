@@ -17,11 +17,12 @@ export class AuthorizationService {
     authorizationDTO: AuthorizationRequestDTO,
   ): Promise<AuthorizationResponseDTO> {
     const foundUser = await this.userService.getUser(authorizationDTO);
+
     const matchedPassword = await bcrypt.compare(
       authorizationDTO.password,
       foundUser.password,
     );
-    
+
     if (!matchedPassword) {
       throw new UnauthorizedException();
     }

@@ -1,9 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ObjectID } from 'typeorm';
-import {
-  IsMongoId,
-  IsBoolean,
-} from 'class-validator';
+import { IsMongoId, IsBoolean } from 'class-validator';
 
 import { CreateUserRequestDTO } from './create-user-request.dto';
 

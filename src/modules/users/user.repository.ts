@@ -3,7 +3,7 @@ import { Repository, EntityRepository, getMongoRepository } from 'typeorm';
 
 import { UserEntity } from './user.entity';
 import { CreateUserRequestDTO, GetUserRequestDTO } from './dto';
-import { getUserWithRole } from './aggregation';
+import { getUsersWithRole } from './aggregation';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
@@ -31,7 +31,7 @@ export class UserRepository extends Repository<UserEntity> {
     getUserRequestDTO: GetUserRequestDTO,
   ): Promise<UserEntity> {
     const userRepository = getMongoRepository(UserEntity);
-    const foundUserWithRole = await getUserWithRole(
+    const foundUserWithRole = await getUsersWithRole(
       userRepository,
       getUserRequestDTO.username,
     );
@@ -43,12 +43,17 @@ export class UserRepository extends Repository<UserEntity> {
     return foundUserWithRole;
   }
 
+  public async getUsers(): Promise<Array<UserEntity>> {
+    const userRepository = getMongoRepository(UserEntity);
+
+    return await getUsersWithRole(userRepository);
+  }
+
   public async getUserByUserField(username): Promise<UserEntity> {
     const userRepository = getMongoRepository(UserEntity);
-    const foundUser = await userRepository.findOne({
+
+    return await userRepository.findOne({
       username,
     });
-
-    return foundUser;
   }
 }

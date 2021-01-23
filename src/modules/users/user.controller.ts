@@ -1,19 +1,8 @@
-import { Controller, Body, Post, Query, Get } from '@nestjs/common';
-import {
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-  ApiParam,
-  ApiBody,
-} from '@nestjs/swagger';
+import { Controller, Body, Post, Get } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
 
 import { UserService } from './user.service';
-import {
-  CreateUserRequestDTO,
-  CreateUserResponseDTO,
-  GetUserResponseDTO,
-  GetUserRequestDTO,
-} from './dto';
+import { CreateUserRequestDTO, CreateUserResponseDTO } from './dto';
 import { UserEntity } from './user.entity';
 
 @ApiTags('Users')
@@ -35,31 +24,13 @@ export class UserController {
     return await this.userService.createUser(createUserRequestDTO);
   }
 
-  @ApiParam({
-    name: 'username',
-    type: 'string',
-    description: 'the username is unique ',
-  })
-  @ApiParam({
-    name: 'firstName',
-    type: 'string',
-  })
-  @ApiParam({
-    name: 'lastName',
-    type: 'string',
-  })
-  @ApiParam({
-    name: 'email',
-    type: 'string',
-  })
-  @ApiParam({
-    name: 'password',
-    type: 'string',
+  @ApiResponse({
+    status: 200,
+    description: `Return created users`,
+    type: [CreateUserResponseDTO],
   })
   @Get()
-  public async getUsers(
-    @Query() getUserRequestDTO: GetUserRequestDTO,
-  ): Promise<UserEntity> {
-    return await this.userService.getUser(getUserRequestDTO);
+  public async getUsers(): Promise<Array<UserEntity>> {
+    return await this.userService.getUsers();
   }
 }
