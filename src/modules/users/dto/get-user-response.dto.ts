@@ -1,16 +1,23 @@
-import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
+import { CreateUserResponseDTO } from './create-user-response.dto';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsEnum } from 'class-validator';
 
-// TODO
-export class GetUserResponseDTO {
+// seeding issue
+// import { UserRoles } from '../../roles';
+export enum UserRoles {
+  ADMIN = 'admin',
+  MENTOR = 'mentor',
+  STUDENT = 'student',
+}
+
+export class GetUserResponseDTO extends CreateUserResponseDTO {
+  constructor() {
+    super();
+  }
+
   @ApiProperty({
-    required: true,
-    maxLength: 80,
-    minLength: 3,
+    enum: [UserRoles.ADMIN, UserRoles.STUDENT, UserRoles.MENTOR],
   })
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(3)
-  @MaxLength(80)
-  username: string;
+  @IsEnum([UserRoles.ADMIN, UserRoles.STUDENT, UserRoles.MENTOR])
+  role: string;
 }

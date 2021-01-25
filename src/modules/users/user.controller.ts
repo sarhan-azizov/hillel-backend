@@ -1,7 +1,16 @@
-import { Controller, Body, Post, Get } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
+import { Controller, Body, Post, Get, UseGuards } from '@nestjs/common';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiBody,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
+import { RolesGuard } from '../../shared/authorization.guard';
 import { UserService } from './user.service';
+import { Roles } from '../../shared/roles.decorator';
+
 import {
   CreateUserRequestDTO,
   CreateUserResponseDTO,
@@ -9,6 +18,7 @@ import {
 } from './dto';
 
 @ApiTags('Users')
+@UseGuards(RolesGuard)
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
@@ -27,6 +37,8 @@ export class UserController {
     return await this.userService.createUser(createUserRequestDTO);
   }
 
+  @ApiBearerAuth()
+  @Roles('admin')
   @ApiResponse({
     status: 200,
     description: `Return created users`,
