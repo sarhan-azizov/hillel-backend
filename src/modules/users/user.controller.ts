@@ -7,9 +7,9 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 
-import { RolesGuard } from '../../shared/authorization.guard';
+import { RolesGuard } from '../../shared/guards/authorization.guard';
 import { UserService } from './user.service';
-import { Roles } from '../../shared/roles.decorator';
+import { Roles } from '../../shared/decorators/roles.decorator';
 
 import {
   CreateUserRequestDTO,

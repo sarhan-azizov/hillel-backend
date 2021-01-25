@@ -2,13 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ObjectID } from 'typeorm';
 import { IsMongoId, IsBoolean } from 'class-validator';
 
-import { CreateUserRequestDTO } from './create-user-request.dto';
+import { BaseUserDTO } from './base-user.dto';
 
-export class CreateUserResponseDTO extends CreateUserRequestDTO {
-  constructor() {
-    super();
-  }
-
+export class CreateUserResponseDTO extends BaseUserDTO {
   @ApiProperty({
     required: true,
     type: String,

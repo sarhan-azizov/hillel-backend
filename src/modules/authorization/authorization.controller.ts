@@ -26,10 +26,10 @@ export class AuthorizationController {
     const token: AuthorizationResponseDTO = await this.authorizationService.authorize(
       authorizationRequestDTO,
     );
+    const bearerToken = 'Bearer ' + token;
 
-    response.set('Authorization', 'Bearer ' + token);
-
-    response.send({ token });
+    response.set('Authorization', bearerToken);
+    response.send({ token: bearerToken });
 
     return token;
   }

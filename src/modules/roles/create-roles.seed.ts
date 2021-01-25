@@ -4,7 +4,7 @@ import { Connection } from 'typeorm';
 import { RoleEntity, UserRoles } from './role.entity';
 
 export default class CreateRoles implements Seeder {
-  public async run(factory: Factory, connection: Connection): Promise<any> {
+  public async run(factory: Factory, connection: Connection): Promise<void> {
     const roleRepository = connection.getMongoRepository(RoleEntity);
 
     await roleRepository.insertMany([

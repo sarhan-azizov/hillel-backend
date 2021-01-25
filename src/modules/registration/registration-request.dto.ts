@@ -1,7 +1,3 @@
 import { CreateUserRequestDTO } from '../users';
 
-export class RegistrationRequestDTO extends CreateUserRequestDTO {
-  constructor() {
-    super();
-  }
-}
+export class RegistrationRequestDTO extends CreateUserRequestDTO {}

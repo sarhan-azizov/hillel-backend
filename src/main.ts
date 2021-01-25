@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
     .setTitle('hillel API')
-    .addBearerAuth({ in: 'header', type: 'http' })
+    .addBearerAuth({ in: 'header', type: 'http', bearerFormat: 'JWT' })
     .build();
   const document = SwaggerModule.createDocument(app, config);
 
