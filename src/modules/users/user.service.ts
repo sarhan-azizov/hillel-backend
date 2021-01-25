@@ -8,6 +8,8 @@ import {
   CreateUserResponseDTO,
   GetUserRequestDTO,
   GetUserResponseDTO,
+  UpdateUserRequestDTO,
+  UpdateUserResponseDTO,
 } from './dto';
 
 @Injectable()
@@ -31,5 +33,12 @@ export class UserService {
 
   public async getUsers(): Promise<Array<GetUserResponseDTO>> {
     return await this.userRepository.getUsers();
+  }
+
+  public async updateUser(
+    username: string,
+    updateUserRequestDTO: Partial<UpdateUserRequestDTO>,
+  ): Promise<UpdateUserResponseDTO> {
+    return await this.userRepository.updateUser(username, updateUserRequestDTO);
   }
 }

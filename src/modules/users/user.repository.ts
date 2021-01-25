@@ -7,6 +7,8 @@ import {
   CreateUserResponseDTO,
   GetUserRequestDTO,
   GetUserResponseDTO,
+  UpdateUserRequestDTO,
+  UpdateUserResponseDTO,
 } from './dto';
 import { getUsersWithRole } from './aggregation';
 
@@ -60,5 +62,20 @@ export class UserRepository extends Repository<UserEntity> {
     return await userRepository.findOne({
       username,
     });
+  }
+
+  public async updateUser(
+    username: string,
+    updateUserRequestDTO: Partial<UpdateUserRequestDTO>,
+  ): Promise<UpdateUserResponseDTO> {
+    const userRepository = getMongoRepository(UserEntity);
+    const updatedUser = await userRepository.findOneAndUpdate(
+      { username },
+      { $set: updateUserRequestDTO },
+    );
+
+    if (updatedUser.ok) {
+      return this.getUser({ username });
+    }
   }
 }
