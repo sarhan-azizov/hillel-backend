@@ -15,15 +15,6 @@ export class RegistrationService {
       registrationRequestDTO,
     );
 
-    return {
-      id: registeredUser.id,
-      username: registeredUser.username,
-      firstName: registeredUser.firstName,
-      lastName: registeredUser.lastName,
-      email: registeredUser.email,
-      password: registeredUser.password,
-      createdAt: registeredUser.createdAt,
-      updatedAt: registeredUser.updatedAt,
-    };
+    return registeredUser;
   }
 }

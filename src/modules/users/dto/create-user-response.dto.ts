@@ -8,6 +8,7 @@ export class CreateUserResponseDTO extends CreateUserRequestDTO {
   constructor() {
     super();
   }
+
   @ApiProperty({
     required: true,
     type: String,

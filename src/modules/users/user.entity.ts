@@ -43,14 +43,13 @@ export class UserEntity extends BaseEntity {
   activated: boolean;
 
   @CreateDateColumn({ type: 'timestamp', nullable: false })
-  createdAt?: Date;
+  createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamp', nullable: true })
-  updatedAt?: Date;
+  updatedAt: Date;
 
   @BeforeInsert()
   async setPassword(password: string) {
-    console.log(this);
     const salt = await bcrypt.genSalt();
     this.password = await bcrypt.hash(password || this.password, salt);
   }

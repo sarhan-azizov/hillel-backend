@@ -2,8 +2,11 @@ import { Controller, Body, Post, Get } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
 
 import { UserService } from './user.service';
-import { CreateUserRequestDTO, CreateUserResponseDTO } from './dto';
-import { UserEntity } from './user.entity';
+import {
+  CreateUserRequestDTO,
+  CreateUserResponseDTO,
+  GetUserResponseDTO,
+} from './dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -20,17 +23,17 @@ export class UserController {
   @Post()
   public async createUser(
     @Body() createUserRequestDTO: CreateUserRequestDTO,
-  ): Promise<UserEntity> {
+  ): Promise<CreateUserResponseDTO> {
     return await this.userService.createUser(createUserRequestDTO);
   }
 
   @ApiResponse({
     status: 200,
     description: `Return created users`,
-    type: [CreateUserResponseDTO],
+    type: [GetUserResponseDTO],
   })
   @Get()
-  public async getUsers(): Promise<Array<UserEntity>> {
+  public async getUsers(): Promise<Array<GetUserResponseDTO>> {
     return await this.userService.getUsers();
   }
 }

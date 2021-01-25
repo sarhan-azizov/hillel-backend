@@ -2,14 +2,19 @@ import { NotFoundException, ConflictException } from '@nestjs/common';
 import { Repository, EntityRepository, getMongoRepository } from 'typeorm';
 
 import { UserEntity } from './user.entity';
-import { CreateUserRequestDTO, GetUserRequestDTO } from './dto';
+import {
+  CreateUserRequestDTO,
+  CreateUserResponseDTO,
+  GetUserRequestDTO,
+  GetUserResponseDTO,
+} from './dto';
 import { getUsersWithRole } from './aggregation';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
   public async createUser(
     createUserRequestDTO: CreateUserRequestDTO,
-  ): Promise<UserEntity> {
+  ): Promise<CreateUserResponseDTO> {
     const foundUser = await this.getUserByUserField(
       createUserRequestDTO.username,
     );
@@ -43,13 +48,13 @@ export class UserRepository extends Repository<UserEntity> {
     return foundUserWithRole;
   }
 
-  public async getUsers(): Promise<Array<UserEntity>> {
+  public async getUsers(): Promise<Array<GetUserResponseDTO>> {
     const userRepository = getMongoRepository(UserEntity);
 
     return await getUsersWithRole(userRepository);
   }
 
-  public async getUserByUserField(username): Promise<UserEntity> {
+  public async getUserByUserField(username): Promise<GetUserResponseDTO> {
     const userRepository = getMongoRepository(UserEntity);
 
     return await userRepository.findOne({
