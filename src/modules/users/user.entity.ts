@@ -13,7 +13,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
-import { UserRoleEntity } from '../user-roles';
+import { UserRoleEntity } from './user-roles';
 
 @Entity('users')
 export class UserEntity extends BaseEntity {

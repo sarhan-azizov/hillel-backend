@@ -7,7 +7,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 
-import { UserEntity } from '../users';
+import { UserEntity } from '../index';
 
 export enum UserRoles {
   ADMIN = 'admin',

@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { IsString, IsNotEmpty, MinLength, MaxLength } from 'class-validator';
 
-export class AuthorizationRequestDTO {
+export class UserAuthorizationRequestDTO {
   @ApiProperty({
     required: true,
     maxLength: 80,

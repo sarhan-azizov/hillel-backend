@@ -1,5 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
+import * as JWT from 'jsonwebtoken';
 
 import { UserEntity } from './user.entity';
 import { UserRepository } from './user.repository';
@@ -10,6 +16,8 @@ import {
   GetUserResponseDTO,
   UpdateUserRequestDTO,
   UpdateUserResponseDTO,
+  UserAuthorizationResponseDTO,
+  UserAuthorizationRequestDTO,
 } from './dto';
 
 @Injectable()
@@ -18,6 +26,44 @@ export class UserService {
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
   ) {}
+
+  public async authorize(
+    authorizationDTO: UserAuthorizationRequestDTO,
+  ): Promise<UserAuthorizationResponseDTO> {
+    const foundUser = await this.getUser(authorizationDTO);
+
+    const matchedPassword = await bcrypt.compare(
+      authorizationDTO.password,
+      foundUser.password,
+    );
+
+    if (!matchedPassword) {
+      throw new UnauthorizedException();
+    }
+
+    if (!foundUser.activated) {
+      throw new ForbiddenException();
+    }
+
+    const tokenPayload = {
+      username: foundUser.username,
+      role: foundUser.role,
+    };
+
+    const token = JWT.sign(tokenPayload, process.env.JWT_SECRET_KEY, {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    });
+
+    return token;
+  }
+
+  public async registration(
+    createUserRequestDTO: CreateUserRequestDTO,
+  ): Promise<CreateUserResponseDTO> {
+    const registeredUser = await this.createUser(createUserRequestDTO);
+
+    return registeredUser;
+  }
 
   public async createUser(
     createUserRequestDTO: CreateUserRequestDTO,

@@ -2,7 +2,7 @@ import { Factory, Seeder } from 'typeorm-seeding';
 import { Connection } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
-import { UserEntity } from './user.entity';
+import { UserEntity } from '../user.entity';
 import { UserRoles, UserRoleEntity } from '../user-roles';
 
 export default class CreateUser implements Seeder {
