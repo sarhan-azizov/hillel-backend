@@ -3,7 +3,7 @@ import { ApiResponse, ApiTags, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 
 import { RolesGuard } from '../../shared/guards/authorization.guard';
 import { UserService } from './user.service';
-import { Roles } from '../../shared/decorators/roles.decorator';
+import { UserRoles } from '../../shared/decorators/roles.decorator';
 
 import {
   UpdateUserRequestDTO,
@@ -18,7 +18,7 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @ApiBearerAuth()
-  @Roles('admin')
+  @UserRoles('admin')
   @ApiResponse({
     status: 200,
     description: `Return created users`,
@@ -30,7 +30,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @Roles('admin')
+  @UserRoles('admin')
   @ApiResponse({
     status: 200,
     description: `Return updated user`,

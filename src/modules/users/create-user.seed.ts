@@ -3,14 +3,13 @@ import { Connection } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import { UserEntity } from './user.entity';
-import { RoleEntity } from '../roles';
-import { UserRoles } from '../roles';
+import { UserRoles, UserRoleEntity } from '../user-roles';
 
 export default class CreateUser implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
     const userRepository = connection.getMongoRepository(UserEntity);
     const adminRole = await connection
-      .getMongoRepository(RoleEntity)
+      .getMongoRepository(UserRoleEntity)
       .findOne({ name: UserRoles.ADMIN });
 
     const salt = await bcrypt.genSalt();

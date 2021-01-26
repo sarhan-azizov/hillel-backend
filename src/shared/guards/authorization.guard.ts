@@ -8,7 +8,8 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import * as JWT from 'jsonwebtoken';
-import { UserRoles } from '../../modules/roles';
+
+import { UserRoles } from '../../modules';
 
 @Injectable()
 export class RolesGuard implements CanActivate {

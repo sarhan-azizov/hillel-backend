@@ -16,7 +16,7 @@ export enum UserRoles {
 }
 
 @Entity('roles')
-export class RoleEntity extends BaseEntity {
+export class UserRoleEntity extends BaseEntity {
   @ObjectIdColumn()
   id: ObjectID;
 

@@ -1,13 +1,13 @@
 import { Factory, Seeder } from 'typeorm-seeding';
 import { Connection } from 'typeorm';
 
-import { RoleEntity, UserRoles } from './role.entity';
+import { UserRoleEntity, UserRoles } from './user-role.entity';
 
-export default class CreateRoles implements Seeder {
+export default class CreateUserRoles implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<void> {
-    const roleRepository = connection.getMongoRepository(RoleEntity);
+    const userRoleRepository = connection.getMongoRepository(UserRoleEntity);
 
-    await roleRepository.insertMany([
+    await userRoleRepository.insertMany([
       { name: UserRoles.ADMIN },
       { name: UserRoles.STUDENT },
       { name: UserRoles.MENTOR },

@@ -13,14 +13,14 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
-import { RoleEntity } from '../roles';
+import { UserRoleEntity } from '../user-roles';
 
 @Entity('users')
 export class UserEntity extends BaseEntity {
   @ObjectIdColumn()
   id: ObjectID;
 
-  @OneToMany((type) => RoleEntity, (role) => role.user, { nullable: true })
+  @OneToMany((type) => UserRoleEntity, (role) => role.user, { nullable: true })
   @JoinColumn({ name: 'id' })
   role: string;
 
