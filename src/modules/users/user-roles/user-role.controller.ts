@@ -9,7 +9,7 @@ import { GetUserRoleResponseDTO } from './get-user-role-response.dto';
 
 @ApiTags('Users')
 @UseGuards(RolesGuard)
-@Controller('roles')
+@Controller('users')
 export class UserRoleController {
   constructor(private userRoleService: UserRoleService) {}
 
@@ -20,7 +20,7 @@ export class UserRoleController {
     description: `Return user roles`,
     type: [GetUserRoleResponseDTO],
   })
-  @Get()
+  @Get('roles')
   public async getUserRoles(): Promise<Array<GetUserRoleResponseDTO>> {
     return await this.userRoleService.getUserRoles();
   }
