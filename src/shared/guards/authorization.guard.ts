@@ -10,8 +10,11 @@ import { Reflector } from '@nestjs/core';
 import * as JWT from 'jsonwebtoken';
 
 import { UserRoles } from '../../modules';
+import { Request } from 'express';
 
-export const getDecodedToken = (token) => {
+export const getDecodedToken = (request: Request) => {
+  const token = request.cookies.Authorization;
+
   if (!token) {
     throw new UnauthorizedException('JSON web token is missing');
   }
@@ -40,8 +43,7 @@ export class RolesGuard implements CanActivate {
       return true;
     }
     const request = context.switchToHttp().getRequest();
-    const token = request.cookies.Authorization;
-    const decodedToken = getDecodedToken(token);
+    const decodedToken = getDecodedToken(request);
 
     if (decodedToken.role && decodedToken.role === UserRoles.ADMIN) {
       return true;

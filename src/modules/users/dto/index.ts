@@ -6,3 +6,4 @@ export { UpdateUserRequestDTO } from './update-user-request.dto';
 export { UpdateUserResponseDTO } from './update-user-reponse.dto';
 export { UserAuthorizationRequestDTO } from './user-authorization-request.dto';
 export { UserAuthorizationResponseDTO } from './user-authorization-response.dto';
+export { UserChangePasswordRequestDTO } from './user-change-password-request.dto';

@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ForbiddenException,
   Injectable,
   UnauthorizedException,
@@ -7,7 +6,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import * as JWT from 'jsonwebtoken';
-import { Request } from 'express';
 
 import { UserEntity } from './user.entity';
 import { UserRepository } from './user.repository';
@@ -20,8 +18,8 @@ import {
   UpdateUserResponseDTO,
   UserAuthorizationResponseDTO,
   UserAuthorizationRequestDTO,
+  UserChangePasswordRequestDTO,
 } from './dto';
-import { getDecodedToken } from '../../shared/guards/authorization.guard';
 
 @Injectable()
 export class UserService {
@@ -41,7 +39,7 @@ export class UserService {
     );
 
     if (!matchedPassword) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('The user password is wrong.');
     }
 
     if (!foundUser.activated) {
@@ -62,11 +60,17 @@ export class UserService {
     return token;
   }
 
-  public async logout(request: Request): Promise<{ username: string }> {
-    const token = request.cookies.Authorization;
-    const decodedToken = getDecodedToken(token);
+  public async changePassword(
+    username: string,
+    userChangePasswordRequestDTO: UserChangePasswordRequestDTO,
+  ): Promise<UpdateUserResponseDTO> {
+    const salt = await bcrypt.genSalt();
+    const password = await bcrypt.hash(
+      userChangePasswordRequestDTO.password,
+      salt,
+    );
 
-    return decodedToken.username;
+    return this.updateUser(username, { password });
   }
 
   public async registration(

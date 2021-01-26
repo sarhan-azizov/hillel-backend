@@ -19,7 +19,10 @@ import {
 } from '@nestjs/swagger';
 import { Response, Request } from 'express';
 
-import { RolesGuard } from '../../shared/guards/authorization.guard';
+import {
+  getDecodedToken,
+  RolesGuard,
+} from '../../shared/guards/authorization.guard';
 import { UserRoles } from '../../shared/decorators/roles.decorator';
 import { UserService } from './user.service';
 
@@ -31,6 +34,7 @@ import {
   UserAuthorizationResponseDTO,
   CreateUserRequestDTO,
   CreateUserResponseDTO,
+  UserChangePasswordRequestDTO,
 } from './dto';
 
 @ApiTags('Users')
@@ -66,14 +70,41 @@ export class UserController {
   @ApiCookieAuth()
   @Get('logout')
   public async logout(@Req() request: Request, @Res() response: Response) {
-    const logoutUsername = await this.userService.logout(request);
+    const decodedToken = await getDecodedToken(request);
 
     response.clearCookie('Authorization');
 
     response.send({
       status: 200,
-      msg: `User ${logoutUsername} was successfully logout`,
+      msg: `User ${decodedToken.username} was successfully logout`,
     });
+  }
+
+  @ApiCookieAuth()
+  @ApiBody({
+    type: UserChangePasswordRequestDTO,
+  })
+  @ApiResponse({
+    status: 200,
+    description: `Return  user with changed password`,
+    type: UpdateUserResponseDTO,
+  })
+  @Patch('change-password')
+  public async changePassword(
+    @Req() request: Request,
+    @Res() response: Response,
+    @Body() userChangePasswordRequestDTO: UserChangePasswordRequestDTO,
+  ): Promise<UpdateUserResponseDTO> {
+    const decodedToken = await getDecodedToken(request);
+    const updatedUser = await this.userService.changePassword(
+      decodedToken.username,
+      userChangePasswordRequestDTO,
+    );
+
+    response.clearCookie('Authorization');
+    response.send(updatedUser);
+
+    return updatedUser;
   }
 
   @ApiBody({ type: CreateUserRequestDTO })

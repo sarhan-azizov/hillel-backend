@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEnum } from 'class-validator';
+import { IsBoolean, IsEnum, IsString } from 'class-validator';
 
 import { BaseUserDTO } from './base-user.dto';
 
@@ -17,6 +17,14 @@ export class UpdateUserRequestDTO extends BaseUserDTO {
   })
   @IsEnum([UserRoles.ADMIN, UserRoles.STUDENT, UserRoles.MENTOR])
   role: string;
+
+  @ApiProperty({
+    required: true,
+    maxLength: 40,
+    minLength: 5,
+  })
+  @IsString()
+  password: string;
 
   @ApiProperty({ default: false })
   @IsBoolean()
