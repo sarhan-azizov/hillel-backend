@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   UnauthorizedException,
@@ -6,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import * as JWT from 'jsonwebtoken';
+import { Request } from 'express';
 
 import { UserEntity } from './user.entity';
 import { UserRepository } from './user.repository';
@@ -19,6 +21,7 @@ import {
   UserAuthorizationResponseDTO,
   UserAuthorizationRequestDTO,
 } from './dto';
+import { getDecodedToken } from '../../shared/guards/authorization.guard';
 
 @Injectable()
 export class UserService {
@@ -42,7 +45,9 @@ export class UserService {
     }
 
     if (!foundUser.activated) {
-      throw new ForbiddenException();
+      throw new ForbiddenException(
+        `The user ${authorizationDTO.password} hasn't activated yet`,
+      );
     }
 
     const tokenPayload = {
@@ -55,6 +60,13 @@ export class UserService {
     });
 
     return token;
+  }
+
+  public async logout(request: Request): Promise<{ username: string }> {
+    const token = request.cookies.Authorization;
+    const decodedToken = getDecodedToken(token);
+
+    return decodedToken.username;
   }
 
   public async registration(

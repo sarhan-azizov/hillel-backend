@@ -6,18 +6,18 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
 import {
   ApiResponse,
   ApiTags,
-  ApiBearerAuth,
+  ApiCookieAuth,
   ApiBody,
-  ApiOperation,
   ApiQuery,
 } from '@nestjs/swagger';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 
 import { RolesGuard } from '../../shared/guards/authorization.guard';
 import { UserRoles } from '../../shared/decorators/roles.decorator';
@@ -26,7 +26,6 @@ import { UserService } from './user.service';
 import {
   UpdateUserRequestDTO,
   UpdateUserResponseDTO,
-  GetUserRequestDTO,
   GetUserResponseDTO,
   UserAuthorizationRequestDTO,
   UserAuthorizationResponseDTO,
@@ -50,17 +49,31 @@ export class UserController {
   @Get('authorization')
   public async authorization(
     @Query() userAuthorizationRequestDTO: UserAuthorizationRequestDTO,
-    @Res() response: Response,
+    @Res({ passthrough: true }) response: Response,
+    @Req() request: Request,
   ): Promise<UserAuthorizationResponseDTO> {
     const token: UserAuthorizationResponseDTO = await this.userService.authorize(
       userAuthorizationRequestDTO,
     );
     const bearerToken = 'Bearer ' + token;
 
-    response.set('Authorization', bearerToken);
+    response.cookie('Authorization', bearerToken);
     response.send({ token: bearerToken });
 
     return token;
+  }
+
+  @ApiCookieAuth()
+  @Get('logout')
+  public async logout(@Req() request: Request, @Res() response: Response) {
+    const logoutUsername = await this.userService.logout(request);
+
+    response.clearCookie('Authorization');
+
+    response.send({
+      status: 200,
+      msg: `User ${logoutUsername} was successfully logout`,
+    });
   }
 
   @ApiBody({ type: CreateUserRequestDTO })
@@ -76,7 +89,7 @@ export class UserController {
     return await this.userService.registration(createUserRequestDTO);
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @UserRoles('admin')
   @ApiResponse({
     status: 200,
@@ -88,7 +101,7 @@ export class UserController {
     return await this.userService.getUsers();
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @UserRoles('admin')
   @ApiResponse({
     status: 200,

@@ -11,6 +11,25 @@ import * as JWT from 'jsonwebtoken';
 
 import { UserRoles } from '../../modules';
 
+export const getDecodedToken = (token) => {
+  if (!token) {
+    throw new UnauthorizedException('JSON web token is missing');
+  }
+
+  const decodedToken = JWT.verify(
+    token.slice(7),
+    process.env.JWT_SECRET_KEY,
+    function (err, decoded) {
+      if (!err) {
+        return decoded;
+      }
+      throw new BadRequestException(err);
+    },
+  );
+
+  return decodedToken;
+};
+
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
@@ -21,21 +40,8 @@ export class RolesGuard implements CanActivate {
       return true;
     }
     const request = context.switchToHttp().getRequest();
-
-    if (!request.headers.authorization) {
-      throw new UnauthorizedException('JSON web token is missing');
-    }
-
-    const decodedToken = JWT.verify(
-      request.headers.authorization.slice(7),
-      process.env.JWT_SECRET_KEY,
-      function (err, decoded) {
-        if (!err) {
-          return decoded;
-        }
-        throw new BadRequestException(err);
-      },
-    );
+    const token = request.cookies.Authorization;
+    const decodedToken = getDecodedToken(token);
 
     if (decodedToken.role && decodedToken.role === UserRoles.ADMIN) {
       return true;
