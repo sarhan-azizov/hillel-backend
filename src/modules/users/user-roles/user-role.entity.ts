@@ -1,13 +1,6 @@
-import {
-  Entity,
-  ObjectID,
-  Column,
-  ObjectIdColumn,
-  BaseEntity,
-  ManyToOne,
-} from 'typeorm';
+import { Entity, ObjectID, Column, ObjectIdColumn, BaseEntity } from 'typeorm';
 
-import { UserEntity } from '../index';
+import { ENTITY_NAMES } from '../../../ENTITY_NAMES';
 
 export enum UserRoles {
   ADMIN = 'admin',
@@ -15,14 +8,11 @@ export enum UserRoles {
   STUDENT = 'student',
 }
 
-@Entity('roles')
+@Entity(ENTITY_NAMES.USER_ROLES)
 export class UserRoleEntity extends BaseEntity {
   @ObjectIdColumn()
   id: ObjectID;
 
   @Column({ type: 'enum', unique: true, nullable: false })
   name: UserRoles;
-
-  @ManyToOne((type) => UserEntity, (user) => user.role, { nullable: true })
-  user: UserEntity;
 }

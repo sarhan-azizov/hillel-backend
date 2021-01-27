@@ -1,3 +1,5 @@
+import { ENTITY_NAMES } from '../../ENTITY_NAMES';
+
 export const getUsersWithRole = async (userRepository, username?) => {
   const aggregation = [
     {
@@ -9,7 +11,7 @@ export const getUsersWithRole = async (userRepository, username?) => {
     },
     {
       $lookup: {
-        from: 'roles',
+        from: ENTITY_NAMES.USER_ROLES,
         localField: 'role',
         foreignField: '_id',
         as: 'role',

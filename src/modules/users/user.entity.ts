@@ -8,20 +8,17 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BeforeUpdate,
-  OneToMany,
-  JoinColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
-import { UserRoleEntity } from './user-roles';
+import { ENTITY_NAMES } from '../../ENTITY_NAMES';
 
-@Entity('users')
+@Entity(ENTITY_NAMES.USERS)
 export class UserEntity extends BaseEntity {
   @ObjectIdColumn()
   id: ObjectID;
 
-  @OneToMany((type) => UserRoleEntity, (role) => role.user, { nullable: true })
-  @JoinColumn({ name: 'id' })
+  @Column({ type: 'string', nullable: true })
   role: string;
 
   @Column({ type: 'string', unique: true, length: 80, nullable: false })
