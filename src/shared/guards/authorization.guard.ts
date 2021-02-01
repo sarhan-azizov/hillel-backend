@@ -9,7 +9,6 @@ import {
 import { Reflector } from '@nestjs/core';
 import * as JWT from 'jsonwebtoken';
 
-import { UserRoles } from '../../modules';
 import { Request } from 'express';
 
 export const getDecodedToken = (request: Request) => {
@@ -45,7 +44,7 @@ export class RolesGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const decodedToken = getDecodedToken(request);
 
-    if (decodedToken.role && decodedToken.role === UserRoles.ADMIN) {
+    if (decodedToken.role && roles.includes(decodedToken.role)) {
       return true;
     }
 
