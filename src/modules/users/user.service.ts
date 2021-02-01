@@ -20,6 +20,7 @@ import {
   UserAuthorizationRequestDTO,
   UserChangePasswordRequestDTO,
 } from './dto';
+import { SharedDeleteResponseDTO } from '../../shared/dto';
 
 @Injectable()
 export class UserService {
@@ -102,5 +103,9 @@ export class UserService {
     updateUserRequestDTO: Partial<UpdateUserRequestDTO>,
   ): Promise<UpdateUserResponseDTO> {
     return await this.userRepository.updateUser(username, updateUserRequestDTO);
+  }
+
+  public async deleteUser(username: string): Promise<SharedDeleteResponseDTO> {
+    return await this.userRepository.deleteUser(username);
   }
 }

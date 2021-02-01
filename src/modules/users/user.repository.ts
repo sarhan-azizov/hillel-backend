@@ -11,6 +11,7 @@ import {
   UpdateUserResponseDTO,
 } from './dto';
 import { getUsersWithRole } from './aggregation';
+import { SharedDeleteResponseDTO } from '../../shared/dto';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
@@ -30,7 +31,7 @@ export class UserRepository extends Repository<UserEntity> {
     }
 
     throw new ConflictException(
-      `The such user ${foundUser.username} is exist.`,
+      `The such user "${foundUser.username}" is exist.`,
     );
   }
 
@@ -77,5 +78,19 @@ export class UserRepository extends Repository<UserEntity> {
     if (updatedUser.ok) {
       return this.getUser({ username });
     }
+  }
+
+  public async deleteUser(username: string): Promise<SharedDeleteResponseDTO> {
+    const userRepository = getMongoRepository(UserEntity);
+    const deletedResponse = await userRepository.deleteOne({ username });
+
+    if (!deletedResponse.deletedCount) {
+      throw new NotFoundException(`the username "${username}" does not exist`);
+    }
+
+    return {
+      status: 200,
+      msg: `the username "${username}" succeed deleted`,
+    };
   }
 }

@@ -9,6 +9,7 @@ import {
   Req,
   Res,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import {
   ApiResponse,
@@ -36,6 +37,7 @@ import {
   CreateUserResponseDTO,
   UserChangePasswordRequestDTO,
 } from './dto';
+import { SharedDeleteResponseDTO } from '../../shared/dto';
 
 @ApiTags('Users')
 @UseGuards(RolesGuard)
@@ -146,5 +148,18 @@ export class UserController {
     @Param('username') username: string,
   ): Promise<UpdateUserResponseDTO> {
     return await this.userService.updateUser(username, updateUserRequestDTO);
+  }
+
+  @ApiCookieAuth()
+  @UserRoles('admin')
+  @ApiResponse({
+    status: 200,
+    description: `Delete user`,
+  })
+  @Delete('/:username')
+  public async deleteUser(
+    @Param('username') username: string,
+  ): Promise<SharedDeleteResponseDTO> {
+    return await this.userService.deleteUser(username);
   }
 }
