@@ -22,6 +22,7 @@ import {
   GetUserQueryDTO,
 } from './dto';
 import { SharedDeleteResponseDTO } from '../../shared/dto';
+import { Token } from '../../shared/types';
 
 @Injectable()
 export class UserService {
@@ -50,7 +51,7 @@ export class UserService {
       );
     }
 
-    const tokenPayload = {
+    const tokenPayload: Token = {
       username: foundUser.username,
       role: foundUser.role,
     };

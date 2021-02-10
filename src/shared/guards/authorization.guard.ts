@@ -10,6 +10,7 @@ import { Reflector } from '@nestjs/core';
 import * as JWT from 'jsonwebtoken';
 
 import { Request } from 'express';
+import { Token } from '../types';
 
 export const getDecodedToken = (request: Request) => {
   const token = request.cookies.Authorization;
@@ -18,7 +19,7 @@ export const getDecodedToken = (request: Request) => {
     throw new UnauthorizedException('JSON web token is missing');
   }
 
-  const decodedToken = JWT.verify(
+  const decodedToken: Token = JWT.verify(
     token.slice(7),
     process.env.JWT_SECRET_KEY,
     function (err, decoded) {
