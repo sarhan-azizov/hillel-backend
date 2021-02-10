@@ -19,6 +19,7 @@ import {
   UserAuthorizationResponseDTO,
   UserAuthorizationRequestDTO,
   UserChangePasswordRequestDTO,
+  GetUserQueryDTO,
 } from './dto';
 import { SharedDeleteResponseDTO } from '../../shared/dto';
 
@@ -94,8 +95,10 @@ export class UserService {
     return await this.userRepository.getUser(getUserRequestDTO);
   }
 
-  public async getUsers(): Promise<Array<GetUserResponseDTO>> {
-    return await this.userRepository.getUsers();
+  public async getUsers(
+    getUserQueryDTO: GetUserQueryDTO,
+  ): Promise<Array<GetUserResponseDTO>> {
+    return await this.userRepository.getUsers(getUserQueryDTO);
   }
 
   public async updateUser(

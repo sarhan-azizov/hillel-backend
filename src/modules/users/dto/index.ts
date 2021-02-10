@@ -7,3 +7,4 @@ export { UpdateUserResponseDTO } from './update-user-reponse.dto';
 export { UserAuthorizationRequestDTO } from './user-authorization-request.dto';
 export { UserAuthorizationResponseDTO } from './user-authorization-response.dto';
 export { UserChangePasswordRequestDTO } from './user-change-password-request.dto';
+export { GetUserQueryDTO } from './get-user-query.dto';

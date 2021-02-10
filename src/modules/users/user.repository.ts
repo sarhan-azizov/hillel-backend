@@ -5,6 +5,7 @@ import { UserEntity } from './user.entity';
 import {
   CreateUserRequestDTO,
   CreateUserResponseDTO,
+  GetUserQueryDTO,
   GetUserRequestDTO,
   GetUserResponseDTO,
   UpdateUserRequestDTO,
@@ -41,7 +42,7 @@ export class UserRepository extends Repository<UserEntity> {
     const userRepository = getMongoRepository(UserEntity);
     const foundUserWithRole = await getUsersWithRole(
       userRepository,
-      getUserRequestDTO.username,
+      getUserRequestDTO,
     );
 
     if (!foundUserWithRole) {
@@ -51,10 +52,12 @@ export class UserRepository extends Repository<UserEntity> {
     return foundUserWithRole;
   }
 
-  public async getUsers(): Promise<Array<GetUserResponseDTO>> {
+  public async getUsers(
+    getUserQueryDTO: GetUserQueryDTO,
+  ): Promise<Array<GetUserResponseDTO>> {
     const userRepository = getMongoRepository(UserEntity);
 
-    return await getUsersWithRole(userRepository);
+    return await getUsersWithRole(userRepository, getUserQueryDTO);
   }
 
   public async getUserByUserField(username): Promise<GetUserResponseDTO> {

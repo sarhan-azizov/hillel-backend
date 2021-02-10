@@ -1,13 +1,34 @@
 import { ENTITY_NAMES } from '../../ENTITY_NAMES';
 
-export const getUsersWithRole = async (userRepository, username?) => {
+type UserParams = {
+  username?: string;
+  activated?: string;
+};
+
+type MatchQuery = {
+  username?: any;
+  activated?: boolean;
+};
+
+export const getUsersWithRole = async (
+  userRepository,
+  params: UserParams = {},
+) => {
+  const matchQuery: MatchQuery = {};
+
+  if (params.username) {
+    matchQuery.username = {
+      $regex: new RegExp(['^', params.username, '$'].join(''), 'i'),
+    };
+  }
+
+  if (params.activated) {
+    matchQuery.activated = params.activated === 'true';
+  }
+
   const aggregation = [
     {
-      $match: {
-        username: {
-          $regex: new RegExp(['^', username, '$'].join(''), 'i'),
-        },
-      },
+      $match: matchQuery,
     },
     {
       $lookup: {
@@ -22,15 +43,11 @@ export const getUsersWithRole = async (userRepository, username?) => {
     },
   ];
 
-  if (!username) {
-    aggregation.shift();
+  const getUsersWithRole = await userRepository.aggregate(aggregation).toArray();
+
+  if (!params.username) {
+    return getUsersWithRole;
   }
 
-  const getUserWithRole = await userRepository.aggregate(aggregation).toArray();
-
-  if (!username) {
-    return getUserWithRole;
-  }
-
-  return getUserWithRole.length ? getUserWithRole[0] : undefined;
+  return getUsersWithRole.length ? getUsersWithRole[0] : undefined;
 };

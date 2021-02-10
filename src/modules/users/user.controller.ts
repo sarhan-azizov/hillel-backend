@@ -36,6 +36,7 @@ import {
   CreateUserRequestDTO,
   CreateUserResponseDTO,
   UserChangePasswordRequestDTO,
+  GetUserQueryDTO,
 } from './dto';
 import { SharedDeleteResponseDTO } from '../../shared/dto';
 
@@ -124,14 +125,17 @@ export class UserController {
 
   @ApiCookieAuth()
   @UserRoles('admin')
+  @ApiQuery({ required: false, name: 'activated', type: 'boolean' })
   @ApiResponse({
     status: 200,
     description: `Return created users`,
     type: [GetUserResponseDTO],
   })
   @Get()
-  public async getUsers(): Promise<Array<GetUserResponseDTO>> {
-    return await this.userService.getUsers();
+  public async getUsers(
+    @Query() getUserQueryDTO: GetUserQueryDTO,
+  ): Promise<Array<GetUserResponseDTO>> {
+    return await this.userService.getUsers(getUserQueryDTO);
   }
 
   @ApiCookieAuth()
