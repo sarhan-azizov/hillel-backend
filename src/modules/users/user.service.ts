@@ -98,7 +98,7 @@ export class UserService {
 
   public async getUsers(
     getUserQueryDTO: GetUserQueryDTO,
-  ): Promise<Array<GetUserResponseDTO>> {
+  ): Promise<GetUserResponseDTO[]> {
     return await this.userRepository.getUsers(getUserQueryDTO);
   }
 

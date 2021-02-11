@@ -11,15 +11,28 @@ import {
   UpdateUserRequestDTO,
   UpdateUserResponseDTO,
 } from './dto';
-import { getUsersWithRole } from './aggregation';
+import {
+  UsersWithRoleAggregationInterface,
+  UsersWithRoleAggregation,
+} from './aggregation';
 import { SharedDeleteResponseDTO } from '../../shared/dto';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
+  readonly usersWithRoleStrategy: UsersWithRoleAggregationInterface;
+
+  constructor() {
+    super();
+
+    this.usersWithRoleStrategy = new UsersWithRoleAggregation(
+      getMongoRepository(UserEntity),
+    );
+  }
+
   public async createUser(
     createUserRequestDTO: CreateUserRequestDTO,
   ): Promise<CreateUserResponseDTO> {
-    const foundUser = await this.getUserByUserField(
+    const foundUser = await this.searchUserByUsername(
       createUserRequestDTO.username,
     );
 
@@ -39,14 +52,14 @@ export class UserRepository extends Repository<UserEntity> {
   public async getUser(
     getUserRequestDTO: GetUserRequestDTO,
   ): Promise<UserEntity> {
-    const userRepository = getMongoRepository(UserEntity);
-    const foundUserWithRole = await getUsersWithRole(
-      userRepository,
+    const foundUserWithRole = await this.usersWithRoleStrategy.getUserWithRole(
       getUserRequestDTO,
     );
 
     if (!foundUserWithRole) {
-      throw new NotFoundException();
+      throw new NotFoundException(
+        `The user "${getUserRequestDTO.username}" doesn't exist.`,
+      );
     }
 
     return foundUserWithRole;
@@ -54,13 +67,11 @@ export class UserRepository extends Repository<UserEntity> {
 
   public async getUsers(
     getUserQueryDTO: GetUserQueryDTO,
-  ): Promise<Array<GetUserResponseDTO>> {
-    const userRepository = getMongoRepository(UserEntity);
-
-    return await getUsersWithRole(userRepository, getUserQueryDTO);
+  ): Promise<GetUserResponseDTO[]> {
+    return await this.usersWithRoleStrategy.getUsersWithRole(getUserQueryDTO);
   }
 
-  public async getUserByUserField(username): Promise<GetUserResponseDTO> {
+  public async searchUserByUsername(username): Promise<GetUserResponseDTO> {
     const userRepository = getMongoRepository(UserEntity);
 
     return await userRepository.findOne({
