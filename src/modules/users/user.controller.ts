@@ -15,14 +15,13 @@ import {
   ApiResponse,
   ApiTags,
   ApiCookieAuth,
-  ApiBearerAuth,
   ApiBody,
   ApiQuery,
 } from '@nestjs/swagger';
 import { Response, Request } from 'express';
 
 import {
-  getDecodedToken,
+  getVerifiedToken,
   RolesGuard,
 } from '../../shared/guards/authorization.guard';
 import { UserRoles } from '../../shared/decorators/roles.decorator';
@@ -65,7 +64,6 @@ export class UserController {
     );
     const bearerToken = 'Bearer ' + token;
 
-    response.header('Authorization', bearerToken);
     response.cookie('Authorization', bearerToken);
     response.send({ token: bearerToken });
 
@@ -73,12 +71,10 @@ export class UserController {
   }
 
   @ApiCookieAuth()
-  @ApiBearerAuth()
   @Get('logout')
   public async logout(@Req() request: Request, @Res() response: Response) {
-    const decodedToken = await getDecodedToken(request);
+    const decodedToken = await getVerifiedToken(request);
 
-    response.removeHeader('Authorization');
     response.clearCookie('Authorization');
 
     response.send({
@@ -88,7 +84,6 @@ export class UserController {
   }
 
   @ApiCookieAuth()
-  @ApiBearerAuth()
   @ApiBody({
     type: UserChangePasswordRequestDTO,
   })
@@ -103,13 +98,13 @@ export class UserController {
     @Res() response: Response,
     @Body() userChangePasswordRequestDTO: UserChangePasswordRequestDTO,
   ): Promise<UpdateUserResponseDTO> {
-    const decodedToken = await getDecodedToken(request);
+    const decodedToken = await getVerifiedToken(request);
     const updatedUser = await this.userService.changePassword(
       decodedToken.username,
       userChangePasswordRequestDTO,
     );
 
-    response.clearCookie('Authorization');``
+    response.clearCookie('Authorization');
     response.send(updatedUser);
 
     return updatedUser;
@@ -129,7 +124,6 @@ export class UserController {
   }
 
   @ApiCookieAuth()
-  @ApiBearerAuth()
   @UserRoles('admin')
   @ApiQuery({ required: false, name: 'activated', type: 'boolean' })
   @ApiResponse({
@@ -145,7 +139,6 @@ export class UserController {
   }
 
   @ApiCookieAuth()
-  @ApiBearerAuth()
   @UserRoles('admin')
   @ApiResponse({
     status: 200,
@@ -162,7 +155,6 @@ export class UserController {
   }
 
   @ApiCookieAuth()
-  @ApiBearerAuth()
   @UserRoles('admin')
   @ApiResponse({
     status: 200,
