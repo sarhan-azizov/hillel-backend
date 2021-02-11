@@ -15,6 +15,7 @@ import {
   ApiResponse,
   ApiTags,
   ApiCookieAuth,
+  ApiBearerAuth,
   ApiBody,
   ApiQuery,
 } from '@nestjs/swagger';
@@ -64,6 +65,7 @@ export class UserController {
     );
     const bearerToken = 'Bearer ' + token;
 
+    response.header('Authorization', bearerToken);
     response.cookie('Authorization', bearerToken);
     response.send({ token: bearerToken });
 
@@ -71,10 +73,12 @@ export class UserController {
   }
 
   @ApiCookieAuth()
+  @ApiBearerAuth()
   @Get('logout')
   public async logout(@Req() request: Request, @Res() response: Response) {
     const decodedToken = await getDecodedToken(request);
 
+    response.removeHeader('Authorization');
     response.clearCookie('Authorization');
 
     response.send({
@@ -84,6 +88,7 @@ export class UserController {
   }
 
   @ApiCookieAuth()
+  @ApiBearerAuth()
   @ApiBody({
     type: UserChangePasswordRequestDTO,
   })
@@ -104,7 +109,7 @@ export class UserController {
       userChangePasswordRequestDTO,
     );
 
-    response.clearCookie('Authorization');
+    response.clearCookie('Authorization');``
     response.send(updatedUser);
 
     return updatedUser;
@@ -124,6 +129,7 @@ export class UserController {
   }
 
   @ApiCookieAuth()
+  @ApiBearerAuth()
   @UserRoles('admin')
   @ApiQuery({ required: false, name: 'activated', type: 'boolean' })
   @ApiResponse({
@@ -139,6 +145,7 @@ export class UserController {
   }
 
   @ApiCookieAuth()
+  @ApiBearerAuth()
   @UserRoles('admin')
   @ApiResponse({
     status: 200,
@@ -155,6 +162,7 @@ export class UserController {
   }
 
   @ApiCookieAuth()
+  @ApiBearerAuth()
   @UserRoles('admin')
   @ApiResponse({
     status: 200,

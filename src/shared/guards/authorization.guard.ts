@@ -12,15 +12,27 @@ import * as JWT from 'jsonwebtoken';
 import { Request } from 'express';
 import { Token } from '../types';
 
-export const getDecodedToken = (request: Request) => {
-  const token = request.cookies.Authorization;
+export const getVerifiedToken = (request: Request) => {
+  // CSRF protection, Double Submit Cookie
+  const cookiesToken = request.cookies.Authorization;
+  const headersToken = request.headers.authorization;
 
-  if (!token) {
-    throw new UnauthorizedException('JSON web token is missing');
+  if (!cookiesToken) {
+    throw new UnauthorizedException('the JSON web token is missing in cookies');
+  }
+
+  if (!headersToken) {
+    throw new UnauthorizedException(
+      'JSON web token is missing in the Authorization header',
+    );
+  }
+
+  if (cookiesToken !== headersToken) {
+    throw new UnauthorizedException("the cookie and Authorization don't match");
   }
 
   const decodedToken: Token = JWT.verify(
-    token.slice(7),
+    cookiesToken.slice(7),
     process.env.JWT_SECRET_KEY,
     function (err, decoded) {
       if (!err) {
@@ -43,7 +55,7 @@ export class RolesGuard implements CanActivate {
       return true;
     }
     const request = context.switchToHttp().getRequest();
-    const decodedToken = getDecodedToken(request);
+    const decodedToken = getVerifiedToken(request);
 
     if (decodedToken.role && roles.includes(decodedToken.role)) {
       return true;

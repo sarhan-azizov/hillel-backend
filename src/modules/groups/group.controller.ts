@@ -15,6 +15,7 @@ export class GroupController {
   constructor(private groupService: GroupService) {}
 
   @ApiBearerAuth()
+  @ApiBearerAuth()
   @UserRoles('admin')
   @ApiResponse({
     status: 200,

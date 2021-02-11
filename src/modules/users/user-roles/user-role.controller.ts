@@ -14,6 +14,7 @@ export class UserRoleController {
   constructor(private userRoleService: UserRoleService) {}
 
   @ApiBearerAuth()
+  @ApiBearerAuth()
   @UserRoles('admin')
   @ApiResponse({
     status: 200,
