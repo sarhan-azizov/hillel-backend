@@ -1,10 +1,11 @@
 export { CreateUserRequestDTO } from './create-user-request.dto';
 export { CreateUserResponseDTO } from './create-user-response.dto';
-export { GetUserRequestDTO } from './get-user-request.dto';
-export { GetUserResponseDTO } from './get-user-response.dto';
+export { UserRequestDTO } from './user-request-dto';
+export { UserResponseDTO } from './user-response.dto';
 export { UpdateUserRequestDTO } from './update-user-request.dto';
 export { UpdateUserResponseDTO } from './update-user-reponse.dto';
 export { UserAuthorizationRequestDTO } from './user-authorization-request.dto';
 export { UserAuthorizationResponseDTO } from './user-authorization-response.dto';
 export { UserChangePasswordRequestDTO } from './user-change-password-request.dto';
-export { GetUserQueryDTO } from './get-user-query.dto';
+export { UserQueryRequestDTO } from './user-query-request.dto';
+export { UsersResponseDTO } from './users-response.dto';

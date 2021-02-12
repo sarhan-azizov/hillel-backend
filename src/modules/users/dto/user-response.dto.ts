@@ -20,7 +20,7 @@ export enum UserRoles {
   STUDENT = 'student',
 }
 
-export class GetUserResponseDTO extends BaseUserDTO {
+export class UserResponseDTO extends BaseUserDTO {
   @ApiProperty({
     required: true,
     type: String,

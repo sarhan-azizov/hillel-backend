@@ -7,19 +7,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import * as JWT from 'jsonwebtoken';
 
-import { UserEntity } from './user.entity';
 import { UserRepository } from './user.repository';
 import {
   CreateUserRequestDTO,
   CreateUserResponseDTO,
-  GetUserRequestDTO,
-  GetUserResponseDTO,
+  UserRequestDTO,
+  UserResponseDTO,
+  UsersResponseDTO,
   UpdateUserRequestDTO,
   UpdateUserResponseDTO,
   UserAuthorizationResponseDTO,
   UserAuthorizationRequestDTO,
   UserChangePasswordRequestDTO,
-  GetUserQueryDTO,
+  UserQueryRequestDTO,
 } from './dto';
 import { SharedDeleteResponseDTO } from '../../shared/dto';
 import { Token } from '../../shared/types';
@@ -34,7 +34,7 @@ export class UserService {
   public async authorize(
     authorizationDTO: UserAuthorizationRequestDTO,
   ): Promise<UserAuthorizationResponseDTO> {
-    const foundUser = await this.getUser(authorizationDTO);
+    const foundUser = await this.userRepository.getUser(authorizationDTO);
 
     const matchedPassword = await bcrypt.compare(
       authorizationDTO.password,
@@ -87,29 +87,41 @@ export class UserService {
   public async createUser(
     createUserRequestDTO: CreateUserRequestDTO,
   ): Promise<CreateUserResponseDTO> {
-    return await this.userRepository.createUser(createUserRequestDTO);
+    const createdUser = await this.userRepository.createUser(
+      createUserRequestDTO,
+    );
+
+    return Object.assign(new CreateUserResponseDTO(), createdUser);
   }
 
   public async getUser(
-    getUserRequestDTO: GetUserRequestDTO,
-  ): Promise<UserEntity> {
-    return await this.userRepository.getUser(getUserRequestDTO);
+    userRequestDTO: UserRequestDTO,
+  ): Promise<UserResponseDTO> {
+    const foundUser = await this.userRepository.getUser(userRequestDTO);
+    return Object.assign(new UserResponseDTO(), foundUser);
   }
 
   public async getUsers(
-    getUserQueryDTO: GetUserQueryDTO,
-  ): Promise<GetUserResponseDTO[]> {
-    return await this.userRepository.getUsers(getUserQueryDTO);
+    userQueryRequestDTO: UserQueryRequestDTO,
+  ): Promise<UsersResponseDTO> {
+    const foundUsers = await this.userRepository.getUsers(userQueryRequestDTO);
+
+    return Object.assign(new UsersResponseDTO(), foundUsers);
   }
 
   public async updateUser(
     username: string,
     updateUserRequestDTO: Partial<UpdateUserRequestDTO>,
   ): Promise<UpdateUserResponseDTO> {
-    return await this.userRepository.updateUser(username, updateUserRequestDTO);
+    const updatedUser = await this.userRepository.updateUser(
+      username,
+      updateUserRequestDTO,
+    );
+    return Object.assign(new UpdateUserResponseDTO(), updatedUser);
   }
 
   public async deleteUser(username: string): Promise<SharedDeleteResponseDTO> {
-    return await this.userRepository.deleteUser(username);
+    const deletedUser = await this.userRepository.deleteUser(username);
+    return Object.assign(new SharedDeleteResponseDTO(), deletedUser);
   }
 }

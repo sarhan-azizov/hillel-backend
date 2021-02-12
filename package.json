@@ -33,6 +33,7 @@
     "class-validator": "^0.13.1",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
+    "faker": "^5.4.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.6.3",
     "reflect-metadata": "^0.1.13",

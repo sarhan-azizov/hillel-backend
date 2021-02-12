@@ -15,6 +15,7 @@ import {
   ApiResponse,
   ApiTags,
   ApiCookieAuth,
+  ApiBearerAuth,
   ApiBody,
   ApiQuery,
 } from '@nestjs/swagger';
@@ -30,15 +31,17 @@ import { UserService } from './user.service';
 import {
   UpdateUserRequestDTO,
   UpdateUserResponseDTO,
-  GetUserResponseDTO,
+  UserResponseDTO,
+  UsersResponseDTO,
   UserAuthorizationRequestDTO,
   UserAuthorizationResponseDTO,
   CreateUserRequestDTO,
   CreateUserResponseDTO,
   UserChangePasswordRequestDTO,
-  GetUserQueryDTO,
+  UserQueryRequestDTO,
 } from './dto';
 import { SharedDeleteResponseDTO } from '../../shared/dto';
+import { TokenType } from './types';
 
 @ApiTags('Users')
 @UseGuards(RolesGuard)
@@ -50,7 +53,7 @@ export class UserController {
   @ApiQuery({ name: 'password', type: 'string' })
   @ApiResponse({
     status: 200,
-    description: `Return authorized token`,
+    description: `Return authorized user's token`,
     type: UserAuthorizationResponseDTO,
   })
   @Get('authorization')
@@ -58,38 +61,44 @@ export class UserController {
     @Query() userAuthorizationRequestDTO: UserAuthorizationRequestDTO,
     @Res({ passthrough: true }) response: Response,
     @Req() request: Request,
-  ): Promise<UserAuthorizationResponseDTO> {
-    const token: UserAuthorizationResponseDTO = await this.userService.authorize(
+  ): Promise<void> {
+    const token: TokenType = await this.userService.authorize(
       userAuthorizationRequestDTO,
     );
     const bearerToken = 'Bearer ' + token;
 
+    response.header('Authorization', bearerToken);
     response.cookie('Authorization', bearerToken);
     response.send({ token: bearerToken });
-
-    return token;
   }
 
   @ApiCookieAuth()
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: `Remove the Authorization header and cookie`,
+  })
   @Get('logout')
   public async logout(@Req() request: Request, @Res() response: Response) {
     const decodedToken = await getVerifiedToken(request);
 
+    response.removeHeader('Authorization');
     response.clearCookie('Authorization');
 
     response.send({
       status: 200,
-      msg: `User ${decodedToken.username} was successfully logout`,
+      msg: `The User ${decodedToken.username} was successfully logout`,
     });
   }
 
   @ApiCookieAuth()
+  @ApiBearerAuth()
   @ApiBody({
     type: UserChangePasswordRequestDTO,
   })
   @ApiResponse({
     status: 200,
-    description: `Return  user with changed password`,
+    description: `Return user with changed password and request re-login`,
     type: UpdateUserResponseDTO,
   })
   @Patch('change-password')
@@ -114,7 +123,7 @@ export class UserController {
   @ApiResponse({
     status: 201,
     description: `Return registered user`,
-    type: GetUserResponseDTO,
+    type: UserResponseDTO,
   })
   @Post('/registration')
   public async registration(
@@ -124,21 +133,23 @@ export class UserController {
   }
 
   @ApiCookieAuth()
+  @ApiBearerAuth()
   @UserRoles('admin')
   @ApiQuery({ required: false, name: 'activated', type: 'boolean' })
   @ApiResponse({
     status: 200,
     description: `Return created users`,
-    type: [GetUserResponseDTO],
+    type: [UserResponseDTO],
   })
   @Get()
   public async getUsers(
-    @Query() getUserQueryDTO: GetUserQueryDTO,
-  ): Promise<Array<GetUserResponseDTO>> {
-    return await this.userService.getUsers(getUserQueryDTO);
+    @Query() userQueryRequestDTO: UserQueryRequestDTO,
+  ): Promise<UsersResponseDTO> {
+    return await this.userService.getUsers(userQueryRequestDTO);
   }
 
   @ApiCookieAuth()
+  @ApiBearerAuth()
   @UserRoles('admin')
   @ApiResponse({
     status: 200,
@@ -155,6 +166,22 @@ export class UserController {
   }
 
   @ApiCookieAuth()
+  @ApiBearerAuth()
+  @UserRoles('admin')
+  @ApiResponse({
+    status: 200,
+    description: `Return the user`,
+    type: UserResponseDTO,
+  })
+  @Get('/:username')
+  public async getUser(
+    @Param('username') username: string,
+  ): Promise<UserResponseDTO> {
+    return await this.userService.getUser({ username });
+  }
+
+  @ApiCookieAuth()
+  @ApiBearerAuth()
   @UserRoles('admin')
   @ApiResponse({
     status: 200,

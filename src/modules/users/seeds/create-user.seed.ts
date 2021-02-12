@@ -1,6 +1,7 @@
 import { Factory, Seeder } from 'typeorm-seeding';
 import { Connection } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import * as faker from 'faker';
 
 import { UserEntity } from '../user.entity';
 import { UserRoles, UserRoleEntity } from '../user-roles';
@@ -13,20 +14,30 @@ export default class CreateUser implements Seeder {
       .findOne({ name: UserRoles.ADMIN });
 
     const salt = await bcrypt.genSalt();
-    const password = await bcrypt.hash(process.env.ADMIN_USER_PASSWORD, salt);
+    const adminUser = {
+      username: process.env.ADMIN_USER_NAME,
+      role: adminRole.id,
+      firstName: 'admin',
+      lastName: 'admin',
+      email: process.env.ADMIN_USER_EMAIL,
+      password: await bcrypt.hash(process.env.ADMIN_USER_PASSWORD, salt),
+      activated: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-    await userRepository.insertMany([
-      {
-        username: process.env.ADMIN_USER_NAME,
-        role: adminRole.id,
-        firstName: 'admin',
-        lastName: 'admin',
-        email: process.env.ADMIN_USER_EMAIL,
-        password,
-        activated: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ]);
+    const password = await bcrypt.hash('qwerty', salt);
+    const mockedUsers = Array.from(Array(20).keys(), () => ({
+      username: faker.internet.userName(),
+      firstName: faker.name.firstName(),
+      lastName: faker.name.lastName(),
+      email: faker.internet.email(),
+      password,
+      activated: faker.random.boolean(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+
+    await userRepository.insertMany([adminUser, ...mockedUsers]);
   }
 }

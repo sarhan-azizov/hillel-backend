@@ -4,34 +4,29 @@ import { Repository, EntityRepository, getMongoRepository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import {
   CreateUserRequestDTO,
-  CreateUserResponseDTO,
-  GetUserQueryDTO,
-  GetUserRequestDTO,
-  GetUserResponseDTO,
+  UserQueryRequestDTO,
+  UserRequestDTO,
   UpdateUserRequestDTO,
-  UpdateUserResponseDTO,
 } from './dto';
-import {
-  UsersWithRoleAggregationInterface,
-  UsersWithRoleAggregation,
-} from './aggregation';
+import { UsersAggregationInterface, UsersAggregation } from './db';
 import { SharedDeleteResponseDTO } from '../../shared/dto';
+import { AggregatedUsers } from './db/types';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
-  readonly usersWithRoleStrategy: UsersWithRoleAggregationInterface;
+  readonly usersAggregation: UsersAggregationInterface;
 
   constructor() {
     super();
 
-    this.usersWithRoleStrategy = new UsersWithRoleAggregation(
+    this.usersAggregation = new UsersAggregation(
       getMongoRepository(UserEntity),
     );
   }
 
   public async createUser(
     createUserRequestDTO: CreateUserRequestDTO,
-  ): Promise<CreateUserResponseDTO> {
+  ): Promise<UserEntity> {
     const foundUser = await this.searchUserByUsername(
       createUserRequestDTO.username,
     );
@@ -49,29 +44,25 @@ export class UserRepository extends Repository<UserEntity> {
     );
   }
 
-  public async getUser(
-    getUserRequestDTO: GetUserRequestDTO,
-  ): Promise<UserEntity> {
-    const foundUserWithRole = await this.usersWithRoleStrategy.getUserWithRole(
-      getUserRequestDTO,
-    );
+  public async getUser(userRequestDTO: UserRequestDTO): Promise<UserEntity> {
+    const foundUser = await this.usersAggregation.getUser(userRequestDTO);
 
-    if (!foundUserWithRole) {
+    if (!foundUser) {
       throw new NotFoundException(
-        `The user "${getUserRequestDTO.username}" doesn't exist.`,
+        `The user "${userRequestDTO.username}" doesn't exist.`,
       );
     }
 
-    return foundUserWithRole;
+    return foundUser;
   }
 
   public async getUsers(
-    getUserQueryDTO: GetUserQueryDTO,
-  ): Promise<GetUserResponseDTO[]> {
-    return await this.usersWithRoleStrategy.getUsersWithRole(getUserQueryDTO);
+    userQueryRequestDTO: UserQueryRequestDTO,
+  ): Promise<AggregatedUsers> {
+    return await this.usersAggregation.getUsers(userQueryRequestDTO);
   }
 
-  public async searchUserByUsername(username): Promise<GetUserResponseDTO> {
+  public async searchUserByUsername(username): Promise<UserEntity> {
     const userRepository = getMongoRepository(UserEntity);
 
     return await userRepository.findOne({
@@ -82,7 +73,7 @@ export class UserRepository extends Repository<UserEntity> {
   public async updateUser(
     username: string,
     updateUserRequestDTO: Partial<UpdateUserRequestDTO>,
-  ): Promise<UpdateUserResponseDTO> {
+  ): Promise<UserEntity> {
     const userRepository = getMongoRepository(UserEntity);
     const updatedUser = await userRepository.findOneAndUpdate(
       { username },
