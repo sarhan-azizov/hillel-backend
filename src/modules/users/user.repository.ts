@@ -4,8 +4,8 @@ import { Repository, EntityRepository, getMongoRepository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import {
   CreateUserRequestDTO,
-  UserQueryRequestDTO,
-  UserRequestDTO,
+  ReadUsersRequestDTO,
+  ReadUserRequestDTO,
   UpdateUserRequestDTO,
 } from './dto';
 import { UsersAggregationInterface, UsersAggregation } from './db';
@@ -44,12 +44,14 @@ export class UserRepository extends Repository<UserEntity> {
     );
   }
 
-  public async getUser(userRequestDTO: UserRequestDTO): Promise<UserEntity> {
-    const foundUser = await this.usersAggregation.getUser(userRequestDTO);
+  public async getUser(
+    readUserRequestDTO: ReadUserRequestDTO,
+  ): Promise<UserEntity> {
+    const foundUser = await this.usersAggregation.getUser(readUserRequestDTO);
 
     if (!foundUser) {
       throw new NotFoundException(
-        `The user "${userRequestDTO.username}" doesn't exist.`,
+        `The user "${readUserRequestDTO.username}" doesn't exist.`,
       );
     }
 
@@ -57,9 +59,9 @@ export class UserRepository extends Repository<UserEntity> {
   }
 
   public async getUsers(
-    userQueryRequestDTO: UserQueryRequestDTO,
+    readUsersRequestDTO: ReadUsersRequestDTO,
   ): Promise<AggregatedUsers> {
-    return await this.usersAggregation.getUsers(userQueryRequestDTO);
+    return await this.usersAggregation.getUsers(readUsersRequestDTO);
   }
 
   public async searchUserByUsername(username): Promise<UserEntity> {

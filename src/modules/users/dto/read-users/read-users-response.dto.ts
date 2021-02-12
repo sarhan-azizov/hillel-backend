@@ -1,15 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsNumber } from 'class-validator';
 
-import { UserResponseDTO } from './user-response.dto';
+import { ReadUserResponseDTO } from '../read-user/read-user-response.dto';
 
-export class UsersResponseDTO {
+export class ReadUsersResponseDTO {
   @ApiProperty({
     required: true,
     type: Array,
   })
   @IsArray()
-  result: UserResponseDTO[];
+  result: ReadUserResponseDTO[];
 
   @ApiProperty({
     required: true,

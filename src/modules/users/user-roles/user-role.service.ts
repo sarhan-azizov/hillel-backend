@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { UserRoleRepository } from './user-role.repository';
-import { GetUserRoleResponseDTO } from './get-user-role-response.dto';
+import { ReadUserRolesResponseDTO } from './read-user-roles-response.dto';
 
 @Injectable()
 export class UserRoleService {
@@ -11,7 +11,7 @@ export class UserRoleService {
     private userRoleRepository: UserRoleRepository,
   ) {}
 
-  public async getUserRoles(): Promise<Array<GetUserRoleResponseDTO>> {
+  public async getUserRoles(): Promise<Array<ReadUserRolesResponseDTO>> {
     return await this.userRoleRepository.getUserRoles();
   }
 }

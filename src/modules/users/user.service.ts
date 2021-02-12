@@ -9,17 +9,18 @@ import * as JWT from 'jsonwebtoken';
 
 import { UserRepository } from './user.repository';
 import {
+  UserChangePasswordRequestDTO,
+  UserChangePasswordResponseDTO,
   CreateUserRequestDTO,
   CreateUserResponseDTO,
-  UserRequestDTO,
-  UserResponseDTO,
-  UsersResponseDTO,
+  ReadUserRequestDTO,
+  ReadUserResponseDTO,
+  ReadUsersRequestDTO,
+  ReadUsersResponseDTO,
+  UserAuthorizationRequestDTO,
+  UserAuthorizationResponseDTO,
   UpdateUserRequestDTO,
   UpdateUserResponseDTO,
-  UserAuthorizationResponseDTO,
-  UserAuthorizationRequestDTO,
-  UserChangePasswordRequestDTO,
-  UserQueryRequestDTO,
 } from './dto';
 import { SharedDeleteResponseDTO } from '../../shared/dto';
 import { Token } from '../../shared/types';
@@ -66,14 +67,15 @@ export class UserService {
   public async changePassword(
     username: string,
     userChangePasswordRequestDTO: UserChangePasswordRequestDTO,
-  ): Promise<UpdateUserResponseDTO> {
+  ): Promise<UserChangePasswordResponseDTO> {
     const salt = await bcrypt.genSalt();
     const password = await bcrypt.hash(
       userChangePasswordRequestDTO.password,
       salt,
     );
+    const updatedUser = await this.updateUser(username, { password });
 
-    return this.updateUser(username, { password });
+    return new UserChangePasswordResponseDTO(updatedUser);
   }
 
   public async registration(
@@ -91,22 +93,22 @@ export class UserService {
       createUserRequestDTO,
     );
 
-    return Object.assign(new CreateUserResponseDTO(), createdUser);
+    return new CreateUserResponseDTO(createdUser);
   }
 
   public async getUser(
-    userRequestDTO: UserRequestDTO,
-  ): Promise<UserResponseDTO> {
-    const foundUser = await this.userRepository.getUser(userRequestDTO);
-    return Object.assign(new UserResponseDTO(), foundUser);
+    readUserRequestDTO: ReadUserRequestDTO,
+  ): Promise<ReadUserResponseDTO> {
+    const foundUser = await this.userRepository.getUser(readUserRequestDTO);
+    return new ReadUserResponseDTO(foundUser);
   }
 
   public async getUsers(
-    userQueryRequestDTO: UserQueryRequestDTO,
-  ): Promise<UsersResponseDTO> {
-    const foundUsers = await this.userRepository.getUsers(userQueryRequestDTO);
+    readUsersRequestDTO: ReadUsersRequestDTO,
+  ): Promise<ReadUsersResponseDTO> {
+    const foundUsers = await this.userRepository.getUsers(readUsersRequestDTO);
 
-    return Object.assign(new UsersResponseDTO(), foundUsers);
+    return Object.assign(new ReadUsersResponseDTO(), foundUsers);
   }
 
   public async updateUser(
@@ -117,7 +119,7 @@ export class UserService {
       username,
       updateUserRequestDTO,
     );
-    return Object.assign(new UpdateUserResponseDTO(), updatedUser);
+    return new UpdateUserResponseDTO(updatedUser);
   }
 
   public async deleteUser(username: string): Promise<SharedDeleteResponseDTO> {

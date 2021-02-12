@@ -5,7 +5,7 @@ import { RolesGuard } from '../../../shared/guards/authorization.guard';
 import { UserRoles } from '../../../shared/decorators/roles.decorator';
 
 import { UserRoleService } from './user-role.service';
-import { GetUserRoleResponseDTO } from './get-user-role-response.dto';
+import { ReadUserRolesResponseDTO } from './read-user-roles-response.dto';
 
 @ApiTags('Users')
 @UseGuards(RolesGuard)
@@ -19,10 +19,10 @@ export class UserRoleController {
   @ApiResponse({
     status: 200,
     description: `Return user roles`,
-    type: [GetUserRoleResponseDTO],
+    type: [ReadUserRolesResponseDTO],
   })
   @Get('roles')
-  public async getUserRoles(): Promise<Array<GetUserRoleResponseDTO>> {
+  public async getUserRoles(): Promise<Array<ReadUserRolesResponseDTO>> {
     return await this.userRoleService.getUserRoles();
   }
 }

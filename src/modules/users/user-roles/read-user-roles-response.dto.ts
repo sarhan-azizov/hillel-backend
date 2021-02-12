@@ -8,7 +8,7 @@ import {
   MaxLength,
 } from 'class-validator';
 
-export class GetUserRoleResponseDTO {
+export class ReadUserRolesResponseDTO {
   @ApiProperty({
     required: true,
     type: String,

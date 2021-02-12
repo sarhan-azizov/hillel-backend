@@ -21,27 +21,26 @@ import {
 } from '@nestjs/swagger';
 import { Response, Request } from 'express';
 
-import {
-  getVerifiedToken,
-  RolesGuard,
-} from '../../shared/guards/authorization.guard';
+import { RolesGuard } from '../../shared/guards/authorization.guard';
+import { getVerifiedToken, removeToken } from '../../shared/helpers';
 import { UserRoles } from '../../shared/decorators/roles.decorator';
 import { UserService } from './user.service';
 
 import {
-  UpdateUserRequestDTO,
-  UpdateUserResponseDTO,
-  UserResponseDTO,
-  UsersResponseDTO,
-  UserAuthorizationRequestDTO,
-  UserAuthorizationResponseDTO,
+  UserChangePasswordRequestDTO,
+  UserChangePasswordResponseDTO,
   CreateUserRequestDTO,
   CreateUserResponseDTO,
-  UserChangePasswordRequestDTO,
-  UserQueryRequestDTO,
+  ReadUsersRequestDTO,
+  ReadUsersResponseDTO,
+  UserAuthorizationRequestDTO,
+  UserAuthorizationResponseDTO,
+  UpdateUserRequestDTO,
+  UpdateUserResponseDTO,
 } from './dto';
 import { SharedDeleteResponseDTO } from '../../shared/dto';
 import { TokenType } from './types';
+import { ReadUserResponseDTO } from './dto/read-user/read-user-response.dto';
 
 @ApiTags('Users')
 @UseGuards(RolesGuard)
@@ -79,11 +78,13 @@ export class UserController {
     description: `Remove the Authorization header and cookie`,
   })
   @Get('logout')
-  public async logout(@Req() request: Request, @Res() response: Response) {
+  public async logout(
+    @Req() request: Request,
+    @Res() response: Response,
+  ): Promise<void> {
     const decodedToken = await getVerifiedToken(request);
 
-    response.removeHeader('Authorization');
-    response.clearCookie('Authorization');
+    removeToken(response);
 
     response.send({
       status: 200,
@@ -106,14 +107,14 @@ export class UserController {
     @Req() request: Request,
     @Res() response: Response,
     @Body() userChangePasswordRequestDTO: UserChangePasswordRequestDTO,
-  ): Promise<UpdateUserResponseDTO> {
+  ): Promise<UserChangePasswordResponseDTO> {
     const decodedToken = await getVerifiedToken(request);
     const updatedUser = await this.userService.changePassword(
       decodedToken.username,
       userChangePasswordRequestDTO,
     );
 
-    response.clearCookie('Authorization');
+    removeToken(response);
     response.send(updatedUser);
 
     return updatedUser;
@@ -123,7 +124,7 @@ export class UserController {
   @ApiResponse({
     status: 201,
     description: `Return registered user`,
-    type: UserResponseDTO,
+    type: CreateUserResponseDTO,
   })
   @Post('/registration')
   public async registration(
@@ -139,13 +140,13 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: `Return created users`,
-    type: [UserResponseDTO],
+    type: ReadUsersResponseDTO,
   })
   @Get()
   public async getUsers(
-    @Query() userQueryRequestDTO: UserQueryRequestDTO,
-  ): Promise<UsersResponseDTO> {
-    return await this.userService.getUsers(userQueryRequestDTO);
+    @Query() readUsersRequestDTO: ReadUsersRequestDTO,
+  ): Promise<ReadUsersResponseDTO> {
+    return await this.userService.getUsers(readUsersRequestDTO);
   }
 
   @ApiCookieAuth()
@@ -171,12 +172,12 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: `Return the user`,
-    type: UserResponseDTO,
+    type: ReadUserResponseDTO,
   })
   @Get('/:username')
   public async getUser(
     @Param('username') username: string,
-  ): Promise<UserResponseDTO> {
+  ): Promise<ReadUserResponseDTO> {
     return await this.userService.getUser({ username });
   }
 
