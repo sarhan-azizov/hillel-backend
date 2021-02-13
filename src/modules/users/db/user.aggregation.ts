@@ -3,12 +3,7 @@ import { MongoRepository } from 'typeorm';
 import { ENTITY_NAMES } from '../../../ENTITY_NAMES';
 import { UserEntity } from '../user.entity';
 import { UsersAggregationInterface } from './user.interface';
-import {
-  UserParams,
-  UserQueryParams,
-  AggregatedUsers,
-  PaginationParams,
-} from './types';
+import { UserParams, UserQueryParams, AggregatedUsers } from './types';
 
 export class UsersAggregation implements UsersAggregationInterface {
   private userRepository: MongoRepository<UserEntity>;
@@ -42,20 +37,28 @@ export class UsersAggregation implements UsersAggregationInterface {
   }
 
   private async getAggregatedUsers(
-    params: PaginationParams = { page: 0, size: 10 },
+    params: UserQueryParams = {},
   ): Promise<AggregatedUsers> {
+    const { page = 1, size = 10 } = params;
+    const $skip = Number(size) * Number(page - 1);
+    const $limit = Number(size) + $skip;
+
+    const aggregationResult = [
+      { $match: { activated: params.activated === 'true' } },
+      { $sort: { username: 1 } },
+      this.joinRolesToUsers,
+      this.setRoleToUser,
+      { $limit },
+      { $skip },
+    ];
+
+    if (!('activated' in params)) {
+      aggregationResult.shift();
+    }
+
     const aggregatedResult: AggregatedUsers[] = await this.userRepository
       .aggregate([
-        {
-          $facet: {
-            result: [
-              { $sort: { username: 1 } },
-              this.joinRolesToUsers,
-              this.setRoleToUser,
-            ],
-            total: [{ $count: 'total' }],
-          },
-        },
+        { $facet: { result: aggregationResult, total: [{ $count: 'total' }] } },
       ])
       .toArray();
 
@@ -81,30 +84,6 @@ export class UsersAggregation implements UsersAggregationInterface {
     return aggregatedUser.length ? aggregatedUser[0] : undefined;
   }
 
-  private async getAggregatedUsersByQuery(
-    params: UserQueryParams,
-  ): Promise<AggregatedUsers> {
-    const aggregation = [
-      { $match: { activated: params.activated === 'true' } },
-      {
-        $facet: {
-          result: [
-            { $sort: { username: 1 } },
-            this.joinRolesToUsers,
-            this.setRoleToUser,
-          ],
-          total: [{ $count: 'total' }],
-        },
-      },
-    ];
-
-    const aggregatedResult = await this.userRepository
-      .aggregate(aggregation)
-      .toArray();
-
-    return this.getAggregatedUsersResponse(aggregatedResult, params);
-  }
-
   public async getUser(params: UserParams): Promise<UserEntity> {
     if (!params.username) {
       return undefined;
@@ -114,10 +93,6 @@ export class UsersAggregation implements UsersAggregationInterface {
   }
 
   public async getUsers(params: UserQueryParams): Promise<AggregatedUsers> {
-    if (params.activated) {
-      return await this.getAggregatedUsersByQuery(params);
-    }
-
-    return await this.getAggregatedUsers();
+    return await this.getAggregatedUsers(params);
   }
 }

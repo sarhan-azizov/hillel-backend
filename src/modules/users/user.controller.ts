@@ -33,6 +33,7 @@ import {
   CreateUserResponseDTO,
   ReadUsersRequestDTO,
   ReadUsersResponseDTO,
+  ReadUserResponseDTO,
   UserAuthorizationRequestDTO,
   UserAuthorizationResponseDTO,
   UpdateUserRequestDTO,
@@ -40,7 +41,6 @@ import {
 } from './dto';
 import { SharedDeleteResponseDTO } from '../../shared/dto';
 import { TokenType } from './types';
-import { ReadUserResponseDTO } from './dto/read-user/read-user-response.dto';
 
 @ApiTags('Users')
 @UseGuards(RolesGuard)
@@ -59,7 +59,6 @@ export class UserController {
   public async authorization(
     @Query() userAuthorizationRequestDTO: UserAuthorizationRequestDTO,
     @Res({ passthrough: true }) response: Response,
-    @Req() request: Request,
   ): Promise<void> {
     const token: TokenType = await this.userService.authorize(
       userAuthorizationRequestDTO,
@@ -137,6 +136,8 @@ export class UserController {
   @ApiBearerAuth()
   @UserRoles('admin')
   @ApiQuery({ required: false, name: 'activated', type: 'boolean' })
+  @ApiQuery({ required: false, name: 'size', type: 'number' })
+  @ApiQuery({ required: false, name: 'page', type: 'number' })
   @ApiResponse({
     status: 200,
     description: `Return created users`,

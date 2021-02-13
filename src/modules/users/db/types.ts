@@ -1,8 +1,7 @@
 import { UserEntity } from '../user.entity';
 
-export type UserParams = {
+export type UserParams = UserSearchParams & {
   username?: string;
-  activated?: string;
 };
 
 export type PaginationParams = {
@@ -11,7 +10,7 @@ export type PaginationParams = {
 };
 
 export type UserSearchParams = {
-  activated: string;
+  activated?: string;
 };
 
 export type UserQueryParams = UserSearchParams & PaginationParams;

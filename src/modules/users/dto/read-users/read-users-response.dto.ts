@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsNumber } from 'class-validator';
 
-import { ReadUserResponseDTO } from '../read-user/read-user-response.dto';
+import { ReadUserResponseDTO } from '../';
 
 export class ReadUsersResponseDTO {
   @ApiProperty({
