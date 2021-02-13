@@ -5,7 +5,7 @@ import { UserService } from './user.service';
 import { UserRepository } from './user.repository';
 import { UserController } from './user.controller';
 
-import { UserRoleModule } from './user-roles';
+import { UserRoleModule } from '../user-roles';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserRepository]), UserRoleModule],

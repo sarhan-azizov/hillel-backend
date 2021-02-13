@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 import * as faker from 'faker';
 
 import { UserEntity } from '../user.entity';
-import { UserRoles, UserRoleEntity } from '../user-roles';
+import { UserRoles, UserRoleEntity } from '../../user-roles';
 
 export default class CreateUser implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {

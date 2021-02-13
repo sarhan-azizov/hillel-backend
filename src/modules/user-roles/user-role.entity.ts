@@ -1,6 +1,6 @@
 import { Entity, ObjectID, Column, ObjectIdColumn, BaseEntity } from 'typeorm';
 
-import { ENTITY_NAMES } from '../../../ENTITY_NAMES';
+import { ENTITY_NAMES } from '../../ENTITY_NAMES';
 
 export enum UserRoles {
   ADMIN = 'admin',
