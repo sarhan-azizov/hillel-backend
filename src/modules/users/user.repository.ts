@@ -7,10 +7,10 @@ import {
   ReadUsersRequestDTO,
   ReadUserRequestDTO,
   UpdateUserRequestDTO,
+  ReadUsersResponseDTO,
 } from './dto';
 import { UsersAggregationInterface, UsersAggregation } from './db';
 import { SharedDeleteResponseDTO } from '../../shared/dto';
-import { AggregatedUsers } from './db/types';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
@@ -60,7 +60,7 @@ export class UserRepository extends Repository<UserEntity> {
 
   public async getUsers(
     readUsersRequestDTO: ReadUsersRequestDTO,
-  ): Promise<AggregatedUsers> {
+  ): Promise<ReadUsersResponseDTO> {
     return await this.usersAggregation.getUsers(readUsersRequestDTO);
   }
 

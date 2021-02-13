@@ -161,7 +161,7 @@ export class UserController {
   @ApiBody({ type: UpdateUserRequestDTO })
   @Patch('/:username')
   public async updateUser(
-    @Body() updateUserRequestDTO: Partial<UpdateUserRequestDTO>,
+    @Body() updateUserRequestDTO: UpdateUserRequestDTO,
     @Param('username') username: string,
   ): Promise<UpdateUserResponseDTO> {
     return await this.userService.updateUser(username, updateUserRequestDTO);

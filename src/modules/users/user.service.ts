@@ -73,57 +73,42 @@ export class UserService {
       userChangePasswordRequestDTO.password,
       salt,
     );
-    const updatedUser = await this.updateUser(username, { password });
 
-    return new UserChangePasswordResponseDTO(updatedUser);
+    return await this.userRepository.updateUser(username, { password });
   }
 
   public async registration(
     createUserRequestDTO: CreateUserRequestDTO,
   ): Promise<CreateUserResponseDTO> {
-    const registeredUser = await this.createUser(createUserRequestDTO);
-
-    return registeredUser;
+    return await this.createUser(createUserRequestDTO);
   }
 
   public async createUser(
     createUserRequestDTO: CreateUserRequestDTO,
   ): Promise<CreateUserResponseDTO> {
-    const createdUser = await this.userRepository.createUser(
-      createUserRequestDTO,
-    );
-
-    return new CreateUserResponseDTO(createdUser);
+    return await this.userRepository.createUser(createUserRequestDTO);
   }
 
   public async getUser(
     readUserRequestDTO: ReadUserRequestDTO,
   ): Promise<ReadUserResponseDTO> {
-    const foundUser = await this.userRepository.getUser(readUserRequestDTO);
-    return new ReadUserResponseDTO(foundUser);
+    return await this.userRepository.getUser(readUserRequestDTO);
   }
 
   public async getUsers(
     readUsersRequestDTO: ReadUsersRequestDTO,
   ): Promise<ReadUsersResponseDTO> {
-    const foundUsers = await this.userRepository.getUsers(readUsersRequestDTO);
-
-    return Object.assign(new ReadUsersResponseDTO(), foundUsers);
+    return await this.userRepository.getUsers(readUsersRequestDTO);
   }
 
   public async updateUser(
     username: string,
-    updateUserRequestDTO: Partial<UpdateUserRequestDTO>,
+    updateUserRequestDTO: UpdateUserRequestDTO,
   ): Promise<UpdateUserResponseDTO> {
-    const updatedUser = await this.userRepository.updateUser(
-      username,
-      updateUserRequestDTO,
-    );
-    return new UpdateUserResponseDTO(updatedUser);
+    return await this.userRepository.updateUser(username, updateUserRequestDTO);
   }
 
   public async deleteUser(username: string): Promise<SharedDeleteResponseDTO> {
-    const deletedUser = await this.userRepository.deleteUser(username);
-    return Object.assign(new SharedDeleteResponseDTO(), deletedUser);
+    return await this.userRepository.deleteUser(username);
   }
 }

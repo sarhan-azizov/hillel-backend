@@ -3,7 +3,8 @@ import { MongoRepository } from 'typeorm';
 import { ENTITY_NAMES } from '../../../ENTITY_NAMES';
 import { UserEntity } from '../user.entity';
 import { UsersAggregationInterface } from './user.interface';
-import { UserParams, UserQueryParams, AggregatedUsers } from './types';
+import { UserParams, UserQueryParams } from './types';
+import { ReadUsersResponseDTO } from '../dto';
 
 export class UsersAggregation implements UsersAggregationInterface {
   private userRepository: MongoRepository<UserEntity>;
@@ -31,20 +32,20 @@ export class UsersAggregation implements UsersAggregationInterface {
     return {
       result: aggregatedUsers.result,
       total: aggregatedUsers.total[0].total,
-      page: Number(params.page),
-      size: Number(params.size),
+      page: params.page,
+      size: params.size,
     };
   }
 
   private async getAggregatedUsers(
     params: UserQueryParams = {},
-  ): Promise<AggregatedUsers> {
+  ): Promise<ReadUsersResponseDTO> {
     const { page = 1, size = 10 } = params;
-    const $skip = Number(size) * Number(page - 1);
-    const $limit = Number(size) + $skip;
+    const $skip = size * page - 1;
+    const $limit = size + $skip;
 
     const aggregationResult = [
-      { $match: { activated: params.activated === 'true' } },
+      { $match: { activated: params.activated } },
       { $sort: { username: 1 } },
       this.joinRolesToUsers,
       this.setRoleToUser,
@@ -56,7 +57,7 @@ export class UsersAggregation implements UsersAggregationInterface {
       aggregationResult.shift();
     }
 
-    const aggregatedResult: AggregatedUsers[] = await this.userRepository
+    const aggregatedResult: ReadUsersResponseDTO[] = await this.userRepository
       .aggregate([
         { $facet: { result: aggregationResult, total: [{ $count: 'total' }] } },
       ])
@@ -92,7 +93,9 @@ export class UsersAggregation implements UsersAggregationInterface {
     return await this.getAggregatedUser(params);
   }
 
-  public async getUsers(params: UserQueryParams): Promise<AggregatedUsers> {
+  public async getUsers(
+    params: UserQueryParams,
+  ): Promise<ReadUsersResponseDTO> {
     return await this.getAggregatedUsers(params);
   }
 }

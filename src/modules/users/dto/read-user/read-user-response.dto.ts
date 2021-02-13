@@ -22,26 +22,12 @@ export enum UserRoles {
 }
 
 export class ReadUserResponseDTO {
-  constructor(props) {
-    Object.assign(this, {
-      id: props._id,
-      username: props.username,
-      firstName: props.firstName,
-      lastName: props.lastName,
-      email: props.email,
-      role: props.role,
-      activated: props.activated,
-      createdAt: props.createdAt,
-      updatedAt: props.updatedAt,
-    });
-  }
-
   @ApiProperty({
     required: true,
     type: String,
   })
   @IsMongoId()
-  _id: ObjectID;
+  id: ObjectID;
 
   @ApiProperty({
     required: true,
