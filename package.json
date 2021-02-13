@@ -30,7 +30,6 @@
     "@nestjs/swagger": "^4.7.11",
     "@nestjs/typeorm": "^7.1.5",
     "bcrypt": "^5.0.0",
-    "class-transformer": "^0.3.2",
     "class-validator": "^0.13.1",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
