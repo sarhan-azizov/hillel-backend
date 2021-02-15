@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsEmail,
-  IsNotEmpty,
+  IsOptional,
   IsString,
   MaxLength,
   MinLength,
@@ -9,51 +10,51 @@ import {
 
 export class UpdateUserRequestDTO {
   @ApiProperty({
-    required: true,
+    required: false,
     maxLength: 80,
     minLength: 3,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @MinLength(3)
-  @MaxLength(80)
-  username: string;
-
-  @ApiProperty({
-    required: true,
-    maxLength: 80,
-    minLength: 3,
-  })
-  @IsString()
-  @IsNotEmpty()
   @MaxLength(80)
   firstName: string;
 
   @ApiProperty({
-    required: true,
+    required: false,
     maxLength: 80,
     minLength: 3,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
+  @MinLength(3)
   @MaxLength(80)
   lastName: string;
 
   @ApiProperty({
-    required: true,
+    required: false,
     maxLength: 80,
     minLength: 5,
   })
   @IsEmail()
-  @IsNotEmpty()
+  @IsOptional()
+  @MinLength(5)
+  @MaxLength(80)
   email: string;
 
+  @ApiProperty({ required: false, type: 'boolean' })
+  @IsOptional()
+  @IsBoolean()
+  activated: boolean;
+
   @ApiProperty({
-    required: true,
+    required: false,
     maxLength: 80,
     minLength: 5,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
+  @MinLength(5)
+  @MaxLength(80)
   password: string;
 }

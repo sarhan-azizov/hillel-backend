@@ -1,23 +1,36 @@
-import { IsBoolean, IsNumber, IsOptional } from 'class-validator';
+import {
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  ValidateIf,
+  Min,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 
+import { toBoolean, isUndefined, toNumber } from '../../../../shared/helpers';
+
 export class ReadUsersRequestDTO {
-  @ApiProperty({ required: false })
-  @Transform(({ value }) => value === 'true')
   @IsBoolean()
   @IsOptional()
+  @ApiProperty({ required: false, type: 'boolean' })
+  @ValidateIf(isUndefined)
+  @Transform(toBoolean)
   activated: boolean;
 
-  @ApiProperty({ required: false, type: 'number', default: 10 })
-  @Transform(({ value }) => Number(value))
   @IsNumber()
   @IsOptional()
+  @ApiProperty({ required: false, type: 'number', default: 10 })
+  @Transform(toNumber)
+  @ValidateIf(isUndefined)
+  @Min(1)
   size: number;
 
-  @ApiProperty({ required: false, type: 'number', default: 1 })
-  @Transform(({ value }) => Number(value))
   @IsNumber()
   @IsOptional()
+  @ApiProperty({ required: false, type: 'number', default: 1 })
+  @Transform(toNumber)
+  @ValidateIf(isUndefined)
+  @Min(1)
   page: number;
 }

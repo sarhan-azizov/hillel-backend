@@ -21,5 +21,7 @@ export class UserAuthorizationRequestDTO {
   })
   @IsString()
   @IsNotEmpty()
+  @MinLength(5)
+  @MaxLength(80)
   password: string;
 }

@@ -11,6 +11,7 @@ import {
 } from './dto';
 import { UsersAggregationInterface, UsersAggregation } from './db';
 import { SharedDeleteResponseDTO } from '../../shared/dto';
+import { caseInsensitive } from '../../shared/helpers';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
@@ -64,11 +65,13 @@ export class UserRepository extends Repository<UserEntity> {
     return await this.usersAggregation.getUsers(readUsersRequestDTO);
   }
 
-  public async searchUserByUsername(username): Promise<UserEntity> {
+  private async searchUserByUsername(username): Promise<UserEntity> {
     const userRepository = getMongoRepository(UserEntity);
 
     return await userRepository.findOne({
-      username,
+      where: {
+        username: caseInsensitive(username),
+      },
     });
   }
 
@@ -78,7 +81,7 @@ export class UserRepository extends Repository<UserEntity> {
   ): Promise<UserEntity> {
     const userRepository = getMongoRepository(UserEntity);
     const updatedUser = await userRepository.findOneAndUpdate(
-      { username },
+      { username: caseInsensitive(username) },
       { $set: updateUserRequestDTO },
     );
 
@@ -89,7 +92,9 @@ export class UserRepository extends Repository<UserEntity> {
 
   public async deleteUser(username: string): Promise<SharedDeleteResponseDTO> {
     const userRepository = getMongoRepository(UserEntity);
-    const deletedResponse = await userRepository.deleteOne({ username });
+    const deletedResponse = await userRepository.deleteOne({
+      username: caseInsensitive(username),
+    });
 
     if (!deletedResponse.deletedCount) {
       throw new NotFoundException(`the username "${username}" does not exist`);

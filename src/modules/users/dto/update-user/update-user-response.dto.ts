@@ -38,6 +38,7 @@ export class UpdateUserResponseDTO {
   })
   @IsString()
   @IsNotEmpty()
+  @MinLength(3)
   @MaxLength(80)
   firstName: string;
 
@@ -48,6 +49,7 @@ export class UpdateUserResponseDTO {
   })
   @IsString()
   @IsNotEmpty()
+  @MinLength(3)
   @MaxLength(80)
   lastName: string;
 
@@ -58,9 +60,11 @@ export class UpdateUserResponseDTO {
   })
   @IsEmail()
   @IsNotEmpty()
+  @MinLength(5)
+  @MaxLength(80)
   email: string;
 
-  @ApiProperty({ required: true, default: false })
+  @ApiProperty({ required: true, type: 'boolean' })
   @IsBoolean()
   activated: boolean;
 

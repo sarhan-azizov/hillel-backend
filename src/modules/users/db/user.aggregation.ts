@@ -5,6 +5,7 @@ import { UserEntity } from '../user.entity';
 import { UsersAggregationInterface } from './user.interface';
 import { UserParams, UserQueryParams } from './types';
 import { ReadUsersResponseDTO } from '../dto';
+import { caseInsensitive } from '../../../shared/helpers';
 
 export class UsersAggregation implements UsersAggregationInterface {
   private userRepository: MongoRepository<UserEntity>;
@@ -71,7 +72,7 @@ export class UsersAggregation implements UsersAggregationInterface {
       {
         $match: {
           username: {
-            $regex: new RegExp(['^', params.username, '$'].join(''), 'i'),
+            $regex: caseInsensitive(params.username),
           },
         },
       },

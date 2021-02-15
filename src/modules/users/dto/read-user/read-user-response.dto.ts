@@ -47,6 +47,7 @@ export class ReadUserResponseDTO {
   })
   @IsString()
   @IsNotEmpty()
+  @MinLength(3)
   @MaxLength(80)
   firstName: string;
 
@@ -57,6 +58,7 @@ export class ReadUserResponseDTO {
   })
   @IsString()
   @IsNotEmpty()
+  @MinLength(3)
   @MaxLength(80)
   lastName: string;
 
@@ -67,6 +69,8 @@ export class ReadUserResponseDTO {
   })
   @IsEmail()
   @IsNotEmpty()
+  @MinLength(5)
+  @MaxLength(80)
   email: string;
 
   @ApiProperty({
@@ -76,7 +80,7 @@ export class ReadUserResponseDTO {
   @IsEnum([UserRoles.ADMIN, UserRoles.STUDENT, UserRoles.MENTOR])
   role: string;
 
-  @ApiProperty({ required: true, default: false })
+  @ApiProperty({ required: true, type: 'boolean' })
   @IsBoolean()
   activated: boolean;
 

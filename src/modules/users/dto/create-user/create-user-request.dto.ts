@@ -26,6 +26,7 @@ export class CreateUserRequestDTO {
   })
   @IsString()
   @IsNotEmpty()
+  @MinLength(3)
   @MaxLength(80)
   firstName: string;
 
@@ -36,6 +37,7 @@ export class CreateUserRequestDTO {
   })
   @IsString()
   @IsNotEmpty()
+  @MinLength(3)
   @MaxLength(80)
   lastName: string;
 
@@ -46,6 +48,8 @@ export class CreateUserRequestDTO {
   })
   @IsEmail()
   @IsNotEmpty()
+  @MinLength(5)
+  @MaxLength(80)
   email: string;
 
   @ApiProperty({
@@ -55,5 +59,7 @@ export class CreateUserRequestDTO {
   })
   @IsString()
   @IsNotEmpty()
+  @MinLength(5)
+  @MaxLength(80)
   password: string;
 }
