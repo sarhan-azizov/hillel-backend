@@ -29,7 +29,7 @@ import { Token } from '../../shared/types';
 export class UserService {
   constructor(
     @InjectRepository(UserRepository)
-    private userRepository: UserRepository,
+    private readonly userRepository: UserRepository,
   ) {}
 
   public async authorize(
@@ -61,7 +61,7 @@ export class UserService {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
 
-    return token;
+    return { token };
   }
 
   public async changePassword(

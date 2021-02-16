@@ -28,7 +28,6 @@ import { UserService } from './user.service';
 
 import {
   UserChangePasswordRequestDTO,
-  UserChangePasswordResponseDTO,
   CreateUserRequestDTO,
   CreateUserResponseDTO,
   ReadUsersRequestDTO,
@@ -52,7 +51,7 @@ export class UserController {
   @ApiQuery({ name: 'password', type: 'string' })
   @ApiResponse({
     status: 200,
-    description: `Return authorized user's token`,
+    description: `User authorization by JWT`,
     type: UserAuthorizationResponseDTO,
   })
   @Get('authorization')
@@ -60,7 +59,7 @@ export class UserController {
     @Query() userAuthorizationRequestDTO: UserAuthorizationRequestDTO,
     @Res({ passthrough: true }) response: Response,
   ): Promise<void> {
-    const token: TokenType = await this.userService.authorize(
+    const { token }: TokenType = await this.userService.authorize(
       userAuthorizationRequestDTO,
     );
     const bearerToken = 'Bearer ' + token;
@@ -74,7 +73,7 @@ export class UserController {
   @ApiBearerAuth()
   @ApiResponse({
     status: 200,
-    description: `Remove the Authorization header and cookie`,
+    description: `User logout by removing JWT from header and cookie`,
   })
   @Get('logout')
   public async logout(
@@ -106,7 +105,7 @@ export class UserController {
     @Req() request: Request,
     @Res() response: Response,
     @Body() userChangePasswordRequestDTO: UserChangePasswordRequestDTO,
-  ): Promise<UserChangePasswordResponseDTO> {
+  ): Promise<void> {
     const decodedToken = await getVerifiedToken(request);
     const updatedUser = await this.userService.changePassword(
       decodedToken.username,
@@ -115,8 +114,6 @@ export class UserController {
 
     removeToken(response);
     response.send(updatedUser);
-
-    return updatedUser;
   }
 
   @ApiBody({ type: CreateUserRequestDTO })
