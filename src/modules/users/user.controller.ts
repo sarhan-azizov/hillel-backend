@@ -190,6 +190,11 @@ export class UserController {
   public async deleteUser(
     @Param('username') username: string,
   ): Promise<SharedDeleteResponseDTO> {
-    return await this.userService.deleteUser(username);
+    await this.userService.deleteUser(username);
+
+    return {
+      status: 200,
+      msg: `the username "${username}" succeed deleted`,
+    };
   }
 }

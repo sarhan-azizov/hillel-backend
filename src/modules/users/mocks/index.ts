@@ -4,4 +4,8 @@ export {
   mockedAuthorizedToken,
 } from './authorization';
 
-export { mockedUser } from './user';
+export {
+  mockedUserResponse,
+  mockedUserRequest,
+  mockedUsersResponse,
+} from './user';

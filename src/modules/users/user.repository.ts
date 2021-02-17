@@ -10,7 +10,6 @@ import {
   ReadUsersResponseDTO,
 } from './dto';
 import { UsersAggregationInterface, UsersAggregation } from './db';
-import { SharedDeleteResponseDTO } from '../../shared/dto';
 import { caseInsensitive } from '../../shared/helpers';
 
 @EntityRepository(UserEntity)
@@ -90,7 +89,7 @@ export class UserRepository extends Repository<UserEntity> {
     }
   }
 
-  public async deleteUser(username: string): Promise<SharedDeleteResponseDTO> {
+  public async deleteUser(username: string): Promise<void> {
     const userRepository = getMongoRepository(UserEntity);
     const deletedResponse = await userRepository.deleteOne({
       username: caseInsensitive(username),
@@ -99,10 +98,5 @@ export class UserRepository extends Repository<UserEntity> {
     if (!deletedResponse.deletedCount) {
       throw new NotFoundException(`the username "${username}" does not exist`);
     }
-
-    return {
-      status: 200,
-      msg: `the username "${username}" succeed deleted`,
-    };
   }
 }

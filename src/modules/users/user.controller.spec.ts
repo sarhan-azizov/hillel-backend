@@ -7,10 +7,12 @@ import { UserService } from './user.service';
 import * as tokenHelpers from '../../shared/helpers/token';
 
 import {
-  mockedUser,
+  mockedUserRequest,
+  mockedUserResponse,
   mockedAuthorizedUser,
   mockedAuthorizedToken,
   mockedAuthorizedResponse,
+  mockedUsersResponse,
 } from './mocks';
 
 jest.mock('../../shared/helpers/token', () => ({
@@ -26,11 +28,11 @@ describe('UserController', () => {
 
   const mockUserService = (): any => ({
     authorize: jest.fn().mockResolvedValue(mockedAuthorizedToken),
-    changePassword: jest.fn().mockResolvedValue(mockedUser),
-    registration: jest.fn(),
+    changePassword: jest.fn().mockResolvedValue(mockedUserResponse),
+    registration: jest.fn().mockResolvedValue(mockedUserResponse),
     createUser: jest.fn(),
-    getUser: jest.fn(),
-    getUsers: jest.fn(),
+    getUser: jest.fn().mockResolvedValue(mockedUserResponse),
+    getUsers: jest.fn().mockResolvedValue(mockedUsersResponse),
     updateUser: jest.fn(),
     deleteUser: jest.fn(),
   });
@@ -95,7 +97,7 @@ describe('UserController', () => {
       expect(tokenHelpers.removeToken).toBeCalledWith(response);
       expect(spyOnResponseSend).toBeCalledWith({
         status: 200,
-        msg: `The User ${mockedUser.username} was successfully logout`,
+        msg: `The User ${mockedUserResponse.username} was successfully logout`,
       });
     });
   });
@@ -107,15 +109,82 @@ describe('UserController', () => {
 
     it('should return user with changed password and logout', async () => {
       await userController.changePassword(request, response, {
-        password: mockedUser.password,
+        password: mockedUserResponse.password,
       });
 
       expect(tokenHelpers.getVerifiedToken).toBeCalledWith(request);
-      expect(userService.changePassword).toBeCalledWith(mockedUser.username, {
-        password: mockedUser.password,
-      });
+      expect(userService.changePassword).toBeCalledWith(
+        mockedUserResponse.username,
+        {
+          password: mockedUserResponse.password,
+        },
+      );
       expect(tokenHelpers.removeToken).toBeCalledWith(response);
-      expect(spyOnResponseSend).toBeCalledWith(mockedUser);
+      expect(spyOnResponseSend).toBeCalledWith(mockedUserResponse);
+    });
+  });
+
+  describe('registration', () => {
+    it('should return a registered user', async () => {
+      const registeredUser = await userController.registration(
+        mockedUserRequest,
+      );
+
+      expect(userService.registration).toBeCalledWith(mockedUserRequest);
+      expect(registeredUser).toEqual(mockedUserResponse);
+    });
+  });
+
+  describe('getUsers', () => {
+    it('should return users', async () => {
+      const users = await userController.getUsers(undefined);
+
+      expect(userService.getUsers).toBeCalledWith(undefined);
+      expect(users).toEqual(mockedUsersResponse);
+    });
+
+    it('should return activated users', async () => {
+      const users = await userController.getUsers({ activated: true });
+
+      expect(userService.getUsers).toBeCalledWith({ activated: true });
+      expect(users).toEqual(mockedUsersResponse);
+    });
+
+    it('should return not activated users', async () => {
+      const users = await userController.getUsers({ activated: false });
+
+      expect(userService.getUsers).toBeCalledWith({ activated: false });
+      expect(users).toEqual(mockedUsersResponse);
+    });
+
+    it('should return users on the 7 page and by 5 per page ', async () => {
+      const users = await userController.getUsers({ size: 5, page: 7 });
+
+      expect(userService.getUsers).toBeCalledWith({ size: 5, page: 7 });
+      expect(users).toEqual(mockedUsersResponse);
+    });
+  });
+
+  describe('getUser', () => {
+    it('should return a user', async () => {
+      const username = mockedUserRequest.username;
+      const user = await userController.getUser(username);
+
+      expect(userService.getUser).toBeCalledWith({ username });
+      expect(user).toEqual(mockedUserResponse);
+    });
+  });
+
+  describe('deleteUser', () => {
+    it('should delete a user', async () => {
+      const username = mockedUserRequest.username;
+      const deletedUserResponse = await userController.deleteUser(username);
+
+      expect(userService.deleteUser).toBeCalledWith(username);
+      expect(deletedUserResponse).toEqual({
+        status: 200,
+        msg: `the username "${username}" succeed deleted`,
+      });
     });
   });
 });

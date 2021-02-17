@@ -22,7 +22,6 @@ import {
   UpdateUserRequestDTO,
   UpdateUserResponseDTO,
 } from './dto';
-import { SharedDeleteResponseDTO } from '../../shared/dto';
 import { Token } from '../../shared/types';
 
 @Injectable()
@@ -108,7 +107,7 @@ export class UserService {
     return await this.userRepository.updateUser(username, updateUserRequestDTO);
   }
 
-  public async deleteUser(username: string): Promise<SharedDeleteResponseDTO> {
-    return await this.userRepository.deleteUser(username);
+  public async deleteUser(username: string): Promise<void> {
+    await this.userRepository.deleteUser(username);
   }
 }
