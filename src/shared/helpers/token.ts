@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import * as JWT from 'jsonwebtoken';
 
-import { Token } from '../types';
+import { TypeToken } from '../../modules/auth/types';
 
 export const getVerifiedToken = (request: Request) => {
   // CSRF protection, Double Submit Cookie
@@ -23,7 +23,7 @@ export const getVerifiedToken = (request: Request) => {
     throw new UnauthorizedException("the cookie and Authorization don't match");
   }
 
-  const decodedToken: Token = JWT.verify(
+  const decodedToken: TypeToken = JWT.verify(
     cookiesToken.slice(7),
     process.env.JWT_SECRET_KEY,
     function (err, decoded) {

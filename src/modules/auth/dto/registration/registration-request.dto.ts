@@ -1,34 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsBoolean,
-  IsDate,
   IsEmail,
-  IsEnum,
-  IsMongoId,
   IsNotEmpty,
   IsString,
   MaxLength,
   MinLength,
 } from 'class-validator';
 
-import { ObjectID } from 'typeorm';
-
-// seeding issue
-// import { UserRoles } from '../../roles';
-export enum UserRoles {
-  ADMIN = 'admin',
-  MENTOR = 'mentor',
-  STUDENT = 'student',
-}
-
-export class ReadUserResponseDTO {
-  @ApiProperty({
-    required: true,
-    type: String,
-  })
-  @IsMongoId()
-  id: ObjectID;
-
+export class RegistrationRequestDTO {
   @ApiProperty({
     required: true,
     maxLength: 80,
@@ -75,25 +54,12 @@ export class ReadUserResponseDTO {
 
   @ApiProperty({
     required: true,
-    enum: [UserRoles.ADMIN, UserRoles.STUDENT, UserRoles.MENTOR],
+    maxLength: 80,
+    minLength: 5,
   })
-  @IsEnum([UserRoles.ADMIN, UserRoles.STUDENT, UserRoles.MENTOR])
-  role: string;
-
-  @ApiProperty({ required: true, type: 'boolean' })
-  @IsBoolean()
-  activated: boolean;
-
-  @ApiProperty({ required: true })
   @IsString()
   @IsNotEmpty()
+  @MinLength(5)
+  @MaxLength(80)
   password: string;
-
-  @ApiProperty({ required: true, type: Date })
-  @IsDate()
-  createdAt: Date;
-
-  @ApiProperty({ required: true, type: Date })
-  @IsDate()
-  updatedAt: Date;
 }

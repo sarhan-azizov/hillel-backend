@@ -3,7 +3,6 @@ import {
   IsBoolean,
   IsDate,
   IsEmail,
-  IsEnum,
   IsMongoId,
   IsNotEmpty,
   IsString,
@@ -13,19 +12,12 @@ import {
 
 import { ObjectID } from 'typeorm';
 
-// seeding issue
-// import { UserRoles } from '../../roles';
-export enum UserRoles {
-  ADMIN = 'admin',
-  MENTOR = 'mentor',
-  STUDENT = 'student',
-}
-
-export class ReadUserResponseDTO {
+export class RegistrationResponseDTO {
   @ApiProperty({
     required: true,
     type: String,
   })
+  @IsNotEmpty()
   @IsMongoId()
   id: ObjectID;
 
@@ -73,21 +65,9 @@ export class ReadUserResponseDTO {
   @MaxLength(80)
   email: string;
 
-  @ApiProperty({
-    required: true,
-    enum: [UserRoles.ADMIN, UserRoles.STUDENT, UserRoles.MENTOR],
-  })
-  @IsEnum([UserRoles.ADMIN, UserRoles.STUDENT, UserRoles.MENTOR])
-  role: string;
-
   @ApiProperty({ required: true, type: 'boolean' })
   @IsBoolean()
   activated: boolean;
-
-  @ApiProperty({ required: true })
-  @IsString()
-  @IsNotEmpty()
-  password: string;
 
   @ApiProperty({ required: true, type: Date })
   @IsDate()

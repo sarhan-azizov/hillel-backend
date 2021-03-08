@@ -4,7 +4,6 @@ import {
   Get,
   Param,
   Patch,
-  Post,
   Query,
   Req,
   Res,
@@ -33,62 +32,16 @@ import {
   ReadUsersRequestDTO,
   ReadUsersResponseDTO,
   ReadUserResponseDTO,
-  UserAuthorizationRequestDTO,
-  UserAuthorizationResponseDTO,
   UpdateUserRequestDTO,
   UpdateUserResponseDTO,
 } from './dto';
 import { SharedDeleteResponseDTO } from '../../shared/dto';
-import { TokenType } from './types';
 
 @ApiTags('Users')
 @UseGuards(RolesGuard)
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
-
-  @ApiQuery({ name: 'username', type: 'string' })
-  @ApiQuery({ name: 'password', type: 'string' })
-  @ApiResponse({
-    status: 200,
-    description: `User authorization by JWT`,
-    type: UserAuthorizationResponseDTO,
-  })
-  @Get('authorization')
-  public async authorization(
-    @Query() userAuthorizationRequestDTO: UserAuthorizationRequestDTO,
-    @Res({ passthrough: true }) response: Response,
-  ): Promise<void> {
-    const { token }: TokenType = await this.userService.authorize(
-      userAuthorizationRequestDTO,
-    );
-    const bearerToken = 'Bearer ' + token;
-
-    response.header('Authorization', bearerToken);
-    response.cookie('Authorization', bearerToken);
-    response.send({ token: bearerToken });
-  }
-
-  @ApiCookieAuth()
-  @ApiBearerAuth()
-  @ApiResponse({
-    status: 200,
-    description: `User logout by removing JWT from header and cookie`,
-  })
-  @Get('logout')
-  public async logout(
-    @Req() request: Request,
-    @Res() response: Response,
-  ): Promise<void> {
-    const decodedToken = await getVerifiedToken(request);
-
-    removeToken(response);
-
-    response.send({
-      status: 200,
-      msg: `The User ${decodedToken.username} was successfully logout`,
-    });
-  }
 
   @ApiCookieAuth()
   @ApiBearerAuth()
@@ -114,19 +67,6 @@ export class UserController {
 
     removeToken(response);
     response.send(updatedUser);
-  }
-
-  @ApiBody({ type: CreateUserRequestDTO })
-  @ApiResponse({
-    status: 201,
-    description: `Return registered user`,
-    type: CreateUserResponseDTO,
-  })
-  @Post('/registration')
-  public async registration(
-    @Body() createUserRequestDTO: CreateUserRequestDTO,
-  ): Promise<CreateUserResponseDTO> {
-    return await this.userService.registration(createUserRequestDTO);
   }
 
   @ApiCookieAuth()

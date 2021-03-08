@@ -10,8 +10,5 @@ export { ReadUserResponseDTO } from './read-user/read-user-response.dto';
 export { ReadUsersRequestDTO } from './read-users/read-users-request.dto';
 export { ReadUsersResponseDTO } from './read-users/read-users-response.dto';
 
-export { UserAuthorizationRequestDTO } from './user-authorization/user-authorization-request.dto';
-export { UserAuthorizationResponseDTO } from './user-authorization/user-authorization-response.dto';
-
 export { UpdateUserRequestDTO } from './update-user/update-user-request.dto';
 export { UpdateUserResponseDTO } from './update-user/update-user-response.dto';

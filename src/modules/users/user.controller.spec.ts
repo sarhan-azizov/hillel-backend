@@ -9,9 +9,6 @@ import * as tokenHelpers from '../../shared/helpers/token';
 import {
   mockedUserRequest,
   mockedUserResponse,
-  mockedAuthorizedUser,
-  mockedAuthorizedToken,
-  mockedAuthorizedResponse,
   mockedUsersResponse,
 } from './mocks';
 
@@ -27,9 +24,7 @@ describe('UserController', () => {
   let userService: UserService;
 
   const mockUserService = (): any => ({
-    authorize: jest.fn().mockResolvedValue(mockedAuthorizedToken),
     changePassword: jest.fn().mockResolvedValue(mockedUserResponse),
-    registration: jest.fn().mockResolvedValue(mockedUserResponse),
     createUser: jest.fn(),
     getUser: jest.fn().mockResolvedValue(mockedUserResponse),
     getUsers: jest.fn().mockResolvedValue(mockedUsersResponse),
@@ -52,56 +47,6 @@ describe('UserController', () => {
     userService = moduleRef.get<UserService>(UserService);
   });
 
-  describe('authorization', () => {
-    const { username, password } = mockedAuthorizedUser;
-    const response: Response = mocks.createResponse();
-
-    it(`Should return an authorized user token`, async () => {
-      const spyOnResponseSend = jest.spyOn(response, 'send');
-
-      await userController.authorization({ username, password }, response);
-
-      expect(userService.authorize).toBeCalledTimes(1);
-      expect(userService.authorize).toBeCalledWith({ username, password });
-      expect(spyOnResponseSend).toBeCalledWith({
-        token: mockedAuthorizedResponse,
-      });
-    });
-
-    it(`Should return a token in an authorization header and cookie`, async () => {
-      const spyOnResponseHeader = jest.spyOn(response, 'header');
-      const spyOnResponseCookie = jest.spyOn(response, 'cookie');
-
-      await userController.authorization({ username, password }, response);
-
-      expect(spyOnResponseHeader).toBeCalledWith(
-        'Authorization',
-        mockedAuthorizedResponse,
-      );
-      expect(spyOnResponseCookie).toBeCalledWith(
-        'Authorization',
-        mockedAuthorizedResponse,
-      );
-    });
-  });
-
-  describe('logout', () => {
-    const response: Response = mocks.createResponse();
-    const request: Request = mocks.createRequest();
-    const spyOnResponseSend = jest.spyOn(response, 'send');
-
-    it('the user should be verified and logout', async () => {
-      await userController.logout(request, response);
-
-      expect(tokenHelpers.getVerifiedToken).toBeCalledWith(request);
-      expect(tokenHelpers.removeToken).toBeCalledWith(response);
-      expect(spyOnResponseSend).toBeCalledWith({
-        status: 200,
-        msg: `The User ${mockedUserResponse.username} was successfully logout`,
-      });
-    });
-  });
-
   describe('change password', () => {
     const response: Response = mocks.createResponse();
     const request: Request = mocks.createRequest();
@@ -121,17 +66,6 @@ describe('UserController', () => {
       );
       expect(tokenHelpers.removeToken).toBeCalledWith(response);
       expect(spyOnResponseSend).toBeCalledWith(mockedUserResponse);
-    });
-  });
-
-  describe('registration', () => {
-    it('should return a registered user', async () => {
-      const registeredUser = await userController.registration(
-        mockedUserRequest,
-      );
-
-      expect(userService.registration).toBeCalledWith(mockedUserRequest);
-      expect(registeredUser).toEqual(mockedUserResponse);
     });
   });
 
