@@ -49,7 +49,6 @@ export class UsersAggregation implements UsersAggregationInterface {
       { $match: { activated: params.activated } },
       { $sort: { username: 1 } },
       this.joinRolesToUsers,
-      this.setRoleToUser,
       { $limit },
       { $skip },
     ];

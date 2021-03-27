@@ -4,6 +4,7 @@ import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 
 import { AppModule } from './app.module';
+import { JSONAPIInterceptor } from './shared/interceptors/jsonapi.interseptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -24,6 +25,8 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  app.useGlobalInterceptors(new JSONAPIInterceptor());
 
   const document = SwaggerModule.createDocument(app, config);
 
