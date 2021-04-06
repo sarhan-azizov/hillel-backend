@@ -38,15 +38,16 @@ export class UsersAggregation implements UsersAggregationInterface {
     };
   }
 
-  private async getAggregatedUsers(
-    params: UserQueryParams = {},
-  ): Promise<ReadUsersResponseDTO> {
-    const { page = 1, size = 10 } = params;
+  private async getAggregatedUsers({
+    page = 1,
+    size = 10,
+    activated,
+  }: UserQueryParams = {}): Promise<ReadUsersResponseDTO> {
     const $skip = size * (page - 1);
     const $limit = size + $skip;
 
     const aggregationResult = [
-      { $match: { activated: params.activated } },
+      { $match: { activated } },
       { $sort: { username: 1 } },
       this.joinRolesToUsers,
       this.setRoleToUser,
@@ -54,7 +55,7 @@ export class UsersAggregation implements UsersAggregationInterface {
       { $skip },
     ];
 
-    if (!('activated' in params)) {
+    if (activated === undefined) {
       aggregationResult.shift();
     }
 
@@ -64,7 +65,7 @@ export class UsersAggregation implements UsersAggregationInterface {
       ])
       .toArray();
 
-    return this.getAggregatedUsersResponse(aggregatedResult, params);
+    return this.getAggregatedUsersResponse(aggregatedResult, { page, size });
   }
 
   private async getAggregatedUser(params: UserParams): Promise<UserEntity> {
