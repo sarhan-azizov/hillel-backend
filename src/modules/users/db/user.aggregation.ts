@@ -42,7 +42,7 @@ export class UsersAggregation implements UsersAggregationInterface {
     params: UserQueryParams = {},
   ): Promise<ReadUsersResponseDTO> {
     const { page = 1, size = 10 } = params;
-    const $skip = size * page - 1;
+    const $skip = size * (page - 1);
     const $limit = size + $skip;
 
     const aggregationResult = [

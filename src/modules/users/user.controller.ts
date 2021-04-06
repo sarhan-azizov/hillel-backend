@@ -77,7 +77,7 @@ export class UserController {
   @ApiQuery({ required: false, name: 'page', type: 'number' })
   @ApiResponse({
     status: 200,
-    description: `Return created users`,
+    description: `Return users`,
     type: ReadUsersResponseDTO,
   })
   @Get()
