@@ -32,6 +32,7 @@ export default class CreateUser implements Seeder {
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
       email: faker.internet.email(),
+      role: null,
       password,
       activated: faker.random.boolean(),
       createdAt: new Date(),

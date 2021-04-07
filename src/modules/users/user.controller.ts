@@ -20,25 +20,23 @@ import {
 } from '@nestjs/swagger';
 import { Response, Request } from 'express';
 
-import { RolesGuard } from '../../shared/guards/authorization.guard';
+import { AuthGuard } from '../../shared/guards/authorization.guard';
 import { getVerifiedToken, removeToken } from '../../shared/helpers';
 import { UserRoles } from '../../shared/decorators/roles.decorator';
 import { UserService } from './user.service';
 
 import {
   UserChangePasswordRequestDTO,
-  CreateUserRequestDTO,
-  CreateUserResponseDTO,
   ReadUsersRequestDTO,
   ReadUsersResponseDTO,
   ReadUserResponseDTO,
   UpdateUserRequestDTO,
   UpdateUserResponseDTO,
 } from './dto';
-import { SharedDeleteResponseDTO } from '../../shared/dto';
+import { SharedDeleteResponseDTO } from '../../shared';
 
 @ApiTags('Users')
-@UseGuards(RolesGuard)
+@UseGuards(AuthGuard)
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}

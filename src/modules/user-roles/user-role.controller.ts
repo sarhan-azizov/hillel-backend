@@ -1,14 +1,14 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
-import { RolesGuard } from '../../shared/guards/authorization.guard';
+import { AuthGuard } from '../../shared/guards/authorization.guard';
 import { UserRoles } from '../../shared/decorators/roles.decorator';
 
 import { UserRoleService } from './user-role.service';
 import { ReadUserRolesResponseDTO } from './read-user-roles-response.dto';
 
 @ApiTags('User Roles')
-@UseGuards(RolesGuard)
+@UseGuards(AuthGuard)
 @Controller('user-roles')
 export class UserRoleController {
   constructor(private userRoleService: UserRoleService) {}

@@ -7,7 +7,7 @@ import {
   UserChangePasswordRequestDTO,
   UserChangePasswordResponseDTO,
   ReadUserRequestDTO,
-  ReadUserResponseDTO,
+  ReadUserResponseWithPasswordsDTO,
   ReadUsersRequestDTO,
   ReadUsersResponseDTO,
   UpdateUserRequestDTO,
@@ -15,6 +15,7 @@ import {
   CreateUserRequestDTO,
   CreateUserResponseDTO,
 } from './dto';
+import { TypeAggregationOptions } from './types';
 
 @Injectable()
 export class UserService {
@@ -44,8 +45,12 @@ export class UserService {
 
   public async getUser(
     readUserRequestDTO: ReadUserRequestDTO,
-  ): Promise<ReadUserResponseDTO> {
-    return await this.userRepository.getUser(readUserRequestDTO);
+    aggregationOptions?: TypeAggregationOptions,
+  ): Promise<ReadUserResponseWithPasswordsDTO> {
+    return await this.userRepository.getUser(
+      readUserRequestDTO,
+      aggregationOptions,
+    );
   }
 
   public async getUsers(

@@ -4,7 +4,6 @@ import {
   IsDate,
   IsEmail,
   IsEnum,
-  IsMongoId,
   IsNotEmpty,
   IsString,
   MaxLength,
@@ -26,7 +25,6 @@ export class ReadUserResponseDTO {
     required: true,
     type: String,
   })
-  @IsMongoId()
   id: ObjectID;
 
   @ApiProperty({
@@ -75,19 +73,15 @@ export class ReadUserResponseDTO {
 
   @ApiProperty({
     required: true,
-    enum: [UserRoles.ADMIN, UserRoles.STUDENT, UserRoles.MENTOR],
+    default: null,
+    enum: [UserRoles.ADMIN, UserRoles.STUDENT, UserRoles.MENTOR, null],
   })
-  @IsEnum([UserRoles.ADMIN, UserRoles.STUDENT, UserRoles.MENTOR])
-  role: string;
+  @IsEnum([UserRoles.ADMIN, UserRoles.STUDENT, UserRoles.MENTOR, null])
+  role = null;
 
   @ApiProperty({ required: true, type: 'boolean' })
   @IsBoolean()
   activated: boolean;
-
-  @ApiProperty({ required: true })
-  @IsString()
-  @IsNotEmpty()
-  password: string;
 
   @ApiProperty({ required: true, type: Date })
   @IsDate()
@@ -96,4 +90,11 @@ export class ReadUserResponseDTO {
   @ApiProperty({ required: true, type: Date })
   @IsDate()
   updatedAt: Date;
+}
+
+export class ReadUserResponseWithPasswordsDTO extends ReadUserResponseDTO {
+  @ApiProperty({ required: true })
+  @IsString()
+  @IsNotEmpty()
+  password: string;
 }

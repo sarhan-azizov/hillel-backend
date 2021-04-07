@@ -23,7 +23,9 @@ export class AuthService {
   public async authorize(
     authRequestDTO: AuthRequestDTO,
   ): Promise<AuthResponseDTO> {
-    const foundUser = await this.userService.getUser(authRequestDTO);
+    const foundUser = await this.userService.getUser(authRequestDTO, {
+      withPassword: true,
+    });
 
     const matchedPassword = await bcrypt.compare(
       authRequestDTO.password,

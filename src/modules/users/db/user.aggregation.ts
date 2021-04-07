@@ -1,4 +1,6 @@
 import { MongoRepository } from 'typeorm';
+import { validate } from 'class-validator';
+import { plainToClass } from 'class-transformer';
 
 import { ENTITY_NAMES } from '../../../ENTITY_NAMES';
 import { UserEntity } from '../user.entity';
@@ -6,6 +8,7 @@ import { UsersAggregationInterface } from './user.interface';
 import { UserParams, UserQueryParams } from './types';
 import { ReadUsersResponseDTO } from '../dto';
 import { caseInsensitive } from '../../../shared/helpers';
+import { TypeAggregationOptions } from '../types';
 
 export class UsersAggregation implements UsersAggregationInterface {
   private userRepository: MongoRepository<UserEntity>;
@@ -18,7 +21,15 @@ export class UsersAggregation implements UsersAggregationInterface {
     },
   };
   private setRoleToUser = {
-    $set: { role: { $arrayElemAt: ['$role.name', 0] } },
+    $set: {
+      role: {
+        $cond: [
+          { $arrayElemAt: ['$role.name', 0] },
+          { $arrayElemAt: ['$role.name', 0] },
+          null,
+        ],
+      },
+    },
   };
 
   constructor(userRepository: MongoRepository<UserEntity>) {
@@ -53,22 +64,29 @@ export class UsersAggregation implements UsersAggregationInterface {
       this.setRoleToUser,
       { $limit },
       { $skip },
+      { $unset: ['password'] },
     ];
+
+    const aggregationTotal = [{ $match: { activated } }, { $count: 'total' }];
 
     if (activated === undefined) {
       aggregationResult.shift();
+      aggregationTotal.shift();
     }
 
     const aggregatedResult: ReadUsersResponseDTO[] = await this.userRepository
       .aggregate([
-        { $facet: { result: aggregationResult, total: [{ $count: 'total' }] } },
+        { $facet: { result: aggregationResult, total: aggregationTotal } },
       ])
       .toArray();
 
     return this.getAggregatedUsersResponse(aggregatedResult, { page, size });
   }
 
-  private async getAggregatedUser(params: UserParams): Promise<UserEntity> {
+  private async getAggregatedUser(
+    params: UserParams,
+    aggregationOptions: TypeAggregationOptions,
+  ): Promise<UserEntity> {
     const aggregation = [
       {
         $match: {
@@ -79,7 +97,13 @@ export class UsersAggregation implements UsersAggregationInterface {
       },
       this.joinRolesToUsers,
       this.setRoleToUser,
+      { $unset: ['password'] },
     ];
+
+    if (aggregationOptions?.withPassword) {
+      aggregation.pop();
+    }
+
     const aggregatedUser = await this.userRepository
       .aggregate(aggregation)
       .toArray();
@@ -87,17 +111,28 @@ export class UsersAggregation implements UsersAggregationInterface {
     return aggregatedUser.length ? aggregatedUser[0] : undefined;
   }
 
-  public async getUser(params: UserParams): Promise<UserEntity> {
+  public async getUser(
+    params: UserParams,
+    aggregationOptions: TypeAggregationOptions,
+  ): Promise<UserEntity> {
     if (!params.username) {
       return undefined;
     }
 
-    return await this.getAggregatedUser(params);
+    return await this.getAggregatedUser(params, aggregationOptions);
   }
 
   public async getUsers(
     params: UserQueryParams,
   ): Promise<ReadUsersResponseDTO> {
-    return await this.getAggregatedUsers(params);
+    const users = await this.getAggregatedUsers(params);
+
+    const errors = await validate(plainToClass(ReadUsersResponseDTO, users));
+
+    if (errors.length) {
+      throw new Error(JSON.stringify(errors, null, 2));
+    }
+
+    return users;
   }
 }

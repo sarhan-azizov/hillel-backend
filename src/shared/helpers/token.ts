@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common';
 import * as JWT from 'jsonwebtoken';
 
 import { TypeToken } from '../../modules/auth/types';
@@ -30,7 +30,7 @@ export const getVerifiedToken = (request: Request) => {
       if (!err) {
         return decoded;
       }
-      throw new BadRequestException(err);
+      throw new UnauthorizedException(err);
     },
   );
 

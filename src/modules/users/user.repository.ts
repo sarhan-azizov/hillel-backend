@@ -11,6 +11,7 @@ import {
 } from './dto';
 import { UsersAggregationInterface, UsersAggregation } from './db';
 import { caseInsensitive } from '../../shared/helpers';
+import { TypeAggregationOptions } from './types';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
@@ -46,8 +47,12 @@ export class UserRepository extends Repository<UserEntity> {
 
   public async getUser(
     readUserRequestDTO: ReadUserRequestDTO,
+    aggregationOptions?: TypeAggregationOptions,
   ): Promise<UserEntity> {
-    const foundUser = await this.usersAggregation.getUser(readUserRequestDTO);
+    const foundUser = await this.usersAggregation.getUser(
+      readUserRequestDTO,
+      aggregationOptions,
+    );
 
     if (!foundUser) {
       throw new NotFoundException(
@@ -81,7 +86,12 @@ export class UserRepository extends Repository<UserEntity> {
     const userRepository = getMongoRepository(UserEntity);
     const updatedUser = await userRepository.findOneAndUpdate(
       { username: caseInsensitive(username) },
-      { $set: updateUserRequestDTO },
+      {
+        $set: {
+          ...updateUserRequestDTO,
+          updatedAt: new Date(),
+        },
+      },
     );
 
     if (updatedUser.ok) {
