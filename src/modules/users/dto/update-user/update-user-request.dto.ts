@@ -33,6 +33,13 @@ export class UpdateUserRequestDTO {
 
   @ApiProperty({
     required: false,
+    type: String,
+  })
+  @IsOptional()
+  role: string;
+
+  @ApiProperty({
+    required: false,
     maxLength: 80,
     minLength: 5,
   })

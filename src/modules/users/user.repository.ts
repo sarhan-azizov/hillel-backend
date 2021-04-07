@@ -1,5 +1,6 @@
 import { NotFoundException, ConflictException } from '@nestjs/common';
 import { Repository, EntityRepository, getMongoRepository } from 'typeorm';
+import { ObjectID } from 'mongodb';
 
 import { UserEntity } from './user.entity';
 import {
@@ -84,6 +85,11 @@ export class UserRepository extends Repository<UserEntity> {
     updateUserRequestDTO: Partial<UpdateUserRequestDTO>,
   ): Promise<UserEntity> {
     const userRepository = getMongoRepository(UserEntity);
+
+    if (updateUserRequestDTO.role) {
+      updateUserRequestDTO.role = new ObjectID(updateUserRequestDTO.role);
+    }
+
     const updatedUser = await userRepository.findOneAndUpdate(
       { username: caseInsensitive(username) },
       {
