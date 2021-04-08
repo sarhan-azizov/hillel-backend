@@ -6,45 +6,38 @@ import {
 import * as bcrypt from 'bcrypt';
 import * as JWT from 'jsonwebtoken';
 
-import {
-  RegistrationRequestDTO,
-  RegistrationResponseDTO,
-  AuthResponseDTO,
-  AuthRequestDTO,
-} from './dto';
+import { AuthRequestDTO, RegistrationRequestDTO } from './dto';
 
-import { UserService } from '../users';
-import { TypeToken } from './types';
+import { UserService, TypeGetUser } from '../users';
+import { TypeToken, TypeParsedToken } from './types';
 
 @Injectable()
 export class AuthService {
   constructor(private readonly userService: UserService) {}
 
-  public async authorize(
-    authRequestDTO: AuthRequestDTO,
-  ): Promise<AuthResponseDTO> {
-    const foundUser = await this.userService.getUser(authRequestDTO, {
+  public async authorize(authRequestDTO: AuthRequestDTO): Promise<TypeToken> {
+    const authorizedUser = await this.userService.getUser(authRequestDTO, {
       withPassword: true,
     });
 
     const matchedPassword = await bcrypt.compare(
       authRequestDTO.password,
-      foundUser.password,
+      authorizedUser.password,
     );
 
     if (!matchedPassword) {
       throw new UnauthorizedException('The user password is wrong.');
     }
 
-    if (!foundUser.activated) {
+    if (!authorizedUser.activated) {
       throw new ForbiddenException(
-        `The user ${authRequestDTO.password} hasn't activated yet`,
+        `The user ${authRequestDTO.username} hasn't activated yet`,
       );
     }
 
-    const tokenPayload: TypeToken = {
-      username: foundUser.username,
-      role: foundUser.role,
+    const tokenPayload: TypeParsedToken = {
+      username: authorizedUser.username,
+      role: authorizedUser.role,
     };
 
     const token = JWT.sign(tokenPayload, process.env.JWT_SECRET_KEY, {
@@ -56,7 +49,7 @@ export class AuthService {
 
   public async registration(
     registrationRequestDTO: RegistrationRequestDTO,
-  ): Promise<RegistrationResponseDTO> {
+  ): Promise<TypeGetUser> {
     return await this.userService.createUser(registrationRequestDTO);
   }
 }

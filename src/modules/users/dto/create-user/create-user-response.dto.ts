@@ -11,6 +11,8 @@ import {
 } from 'class-validator';
 
 import { ObjectID } from 'typeorm';
+import { Type } from 'class-transformer';
+import { ReadUserRolesResponseDTO } from '../../../user-roles';
 
 export class CreateUserResponseDTO {
   @ApiProperty({
@@ -42,6 +44,12 @@ export class CreateUserResponseDTO {
   @MinLength(3)
   @MaxLength(80)
   firstName: string;
+
+  @ApiProperty({
+    required: true,
+  })
+  @Type(() => ReadUserRolesResponseDTO)
+  role: ReadUserRolesResponseDTO;
 
   @ApiProperty({
     required: true,

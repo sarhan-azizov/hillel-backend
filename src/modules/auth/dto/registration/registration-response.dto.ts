@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+
 import {
   IsBoolean,
   IsDate,
@@ -11,6 +13,7 @@ import {
 } from 'class-validator';
 
 import { ObjectID } from 'typeorm';
+import { ReadUserRolesResponseDTO } from '../../../user-roles';
 
 export class RegistrationResponseDTO {
   @ApiProperty({
@@ -53,6 +56,12 @@ export class RegistrationResponseDTO {
   @MinLength(3)
   @MaxLength(80)
   lastName: string;
+
+  @ApiProperty({
+    required: true,
+  })
+  @Type(() => ReadUserRolesResponseDTO)
+  role: ReadUserRolesResponseDTO;
 
   @ApiProperty({
     required: true,

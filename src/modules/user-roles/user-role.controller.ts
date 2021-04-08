@@ -1,11 +1,17 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { ApiResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiResponse,
+  ApiTags,
+  ApiBearerAuth,
+  ApiCookieAuth,
+} from '@nestjs/swagger';
 
 import { AuthGuard } from '../../shared/guards/authorization.guard';
 import { UserRoles } from '../../shared/decorators/roles.decorator';
 
 import { UserRoleService } from './user-role.service';
 import { ReadUserRolesResponseDTO } from './read-user-roles-response.dto';
+import { TypeUserRole } from './types';
 
 @ApiTags('User Roles')
 @UseGuards(AuthGuard)
@@ -13,7 +19,7 @@ import { ReadUserRolesResponseDTO } from './read-user-roles-response.dto';
 export class UserRoleController {
   constructor(private userRoleService: UserRoleService) {}
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @ApiBearerAuth()
   @UserRoles('admin')
   @ApiResponse({
@@ -22,7 +28,7 @@ export class UserRoleController {
     type: [ReadUserRolesResponseDTO],
   })
   @Get()
-  public async getUserRoles(): Promise<Array<ReadUserRolesResponseDTO>> {
+  public async getUserRoles(): Promise<TypeUserRole[]> {
     return await this.userRoleService.getUserRoles();
   }
 }

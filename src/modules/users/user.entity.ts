@@ -18,8 +18,8 @@ export class UserEntity extends BaseEntity {
   @ObjectIdColumn()
   id: ObjectID;
 
-  @Column({ type: 'string', nullable: true })
-  role: string;
+  @Column({ type: 'array' })
+  role: [];
 
   @Column({ type: 'string', unique: true, length: 80, nullable: false })
   username: string;

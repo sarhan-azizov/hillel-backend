@@ -7,6 +7,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { ObjectID, ObjectIdColumn } from 'typeorm';
 
 export class UpdateUserRequestDTO {
   @ApiProperty({
@@ -35,8 +36,9 @@ export class UpdateUserRequestDTO {
     required: false,
     type: String,
   })
+  @IsString()
   @IsOptional()
-  role: string;
+  role: ObjectID;
 
   @ApiProperty({
     required: false,

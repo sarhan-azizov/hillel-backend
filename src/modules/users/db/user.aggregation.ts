@@ -8,7 +8,11 @@ import { UsersAggregationInterface } from './user.interface';
 import { UserParams, UserQueryParams } from './types';
 import { ReadUsersResponseDTO } from '../dto';
 import { caseInsensitive } from '../../../shared/helpers';
-import { TypeAggregationOptions } from '../types';
+import {
+  TypeAggregationOptions,
+  TypeGetUsers,
+  TypeGetUserWithPassword,
+} from '../types';
 
 export class UsersAggregation implements UsersAggregationInterface {
   private userRepository: MongoRepository<UserEntity>;
@@ -20,30 +24,19 @@ export class UsersAggregation implements UsersAggregationInterface {
       as: 'role',
     },
   };
-  private setRoleToUser = {
-    $set: {
-      role: {
-        $cond: [
-          { $arrayElemAt: ['$role.name', 0] },
-          { $arrayElemAt: ['$role.name', 0] },
-          null,
-        ],
-      },
-    },
-  };
 
   constructor(userRepository: MongoRepository<UserEntity>) {
     this.userRepository = userRepository;
   }
 
-  private getAggregatedUsersResponse(aggregatedResult, params) {
+  private getAggregatedUsersResponse(aggregatedResult, params): TypeGetUsers {
     const aggregatedUsers = aggregatedResult.length
       ? aggregatedResult[0]
       : { result: [], total: [{ total: 0 }], page: 0, size: 10 };
 
     return {
       result: aggregatedUsers.result,
-      total: aggregatedUsers.total[0].total,
+      total: aggregatedUsers.total[0]?.total | 0,
       page: params.page,
       size: params.size,
     };
@@ -53,7 +46,7 @@ export class UsersAggregation implements UsersAggregationInterface {
     page = 1,
     size = 10,
     activated,
-  }: UserQueryParams = {}): Promise<ReadUsersResponseDTO> {
+  }: UserQueryParams = {}): Promise<TypeGetUsers> {
     const $skip = size * (page - 1);
     const $limit = size + $skip;
 
@@ -61,7 +54,6 @@ export class UsersAggregation implements UsersAggregationInterface {
       { $match: { activated } },
       { $sort: { username: 1 } },
       this.joinRolesToUsers,
-      this.setRoleToUser,
       { $limit },
       { $skip },
       { $unset: ['password'] },
@@ -86,7 +78,7 @@ export class UsersAggregation implements UsersAggregationInterface {
   private async getAggregatedUser(
     params: UserParams,
     aggregationOptions: TypeAggregationOptions,
-  ): Promise<UserEntity> {
+  ): Promise<TypeGetUserWithPassword> {
     const aggregation = [
       {
         $match: {
@@ -96,7 +88,6 @@ export class UsersAggregation implements UsersAggregationInterface {
         },
       },
       this.joinRolesToUsers,
-      this.setRoleToUser,
       { $unset: ['password'] },
     ];
 
@@ -114,7 +105,7 @@ export class UsersAggregation implements UsersAggregationInterface {
   public async getUser(
     params: UserParams,
     aggregationOptions: TypeAggregationOptions,
-  ): Promise<UserEntity> {
+  ): Promise<TypeGetUserWithPassword> {
     if (!params.username) {
       return undefined;
     }
@@ -122,9 +113,7 @@ export class UsersAggregation implements UsersAggregationInterface {
     return await this.getAggregatedUser(params, aggregationOptions);
   }
 
-  public async getUsers(
-    params: UserQueryParams,
-  ): Promise<ReadUsersResponseDTO> {
+  public async getUsers(params: UserQueryParams): Promise<TypeGetUsers> {
     const users = await this.getAggregatedUsers(params);
 
     const errors = await validate(plainToClass(ReadUsersResponseDTO, users));

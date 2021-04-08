@@ -11,6 +11,8 @@ import {
 } from 'class-validator';
 
 import { ObjectID } from 'typeorm';
+import { ReadUserRolesResponseDTO } from '../../../user-roles/read-user-roles-response.dto';
+import { Type } from 'class-transformer';
 
 // seeding issue
 // import { UserRoles } from '../../roles';
@@ -73,11 +75,9 @@ export class ReadUserResponseDTO {
 
   @ApiProperty({
     required: true,
-    default: null,
-    enum: [UserRoles.ADMIN, UserRoles.STUDENT, UserRoles.MENTOR, null],
   })
-  @IsEnum([UserRoles.ADMIN, UserRoles.STUDENT, UserRoles.MENTOR, null])
-  role = null;
+  @Type(() => ReadUserRolesResponseDTO)
+  role: ReadUserRolesResponseDTO;
 
   @ApiProperty({ required: true, type: 'boolean' })
   @IsBoolean()

@@ -7,6 +7,8 @@ import {
   MinLength,
 } from 'class-validator';
 
+import { ObjectID } from 'mongodb';
+
 export class RegistrationRequestDTO {
   @ApiProperty({
     required: true,
@@ -51,6 +53,8 @@ export class RegistrationRequestDTO {
   @MinLength(5)
   @MaxLength(80)
   email: string;
+
+  role: ObjectID;
 
   @ApiProperty({
     required: true,

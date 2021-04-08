@@ -33,7 +33,9 @@ import {
   UpdateUserRequestDTO,
   UpdateUserResponseDTO,
 } from './dto';
-import { SharedDeleteResponseDTO } from '../../shared';
+
+import { TypeSharedDelete } from '../../shared';
+import { TypeGetUser, TypeGetUsers } from './types';
 
 @ApiTags('Users')
 @UseGuards(AuthGuard)
@@ -64,6 +66,7 @@ export class UserController {
     );
 
     removeToken(response);
+
     response.send(updatedUser);
   }
 
@@ -81,7 +84,7 @@ export class UserController {
   @Get()
   public async getUsers(
     @Query() readUsersRequestDTO: ReadUsersRequestDTO,
-  ): Promise<ReadUsersResponseDTO> {
+  ): Promise<TypeGetUsers> {
     return await this.userService.getUsers(readUsersRequestDTO);
   }
 
@@ -98,7 +101,7 @@ export class UserController {
   public async updateUser(
     @Body() updateUserRequestDTO: UpdateUserRequestDTO,
     @Param('username') username: string,
-  ): Promise<UpdateUserResponseDTO> {
+  ): Promise<TypeGetUser> {
     return await this.userService.updateUser(username, updateUserRequestDTO);
   }
 
@@ -113,7 +116,7 @@ export class UserController {
   @Get('/:username')
   public async getUser(
     @Param('username') username: string,
-  ): Promise<ReadUserResponseDTO> {
+  ): Promise<TypeGetUser> {
     return await this.userService.getUser({ username });
   }
 
@@ -127,7 +130,7 @@ export class UserController {
   @Delete('/:username')
   public async deleteUser(
     @Param('username') username: string,
-  ): Promise<SharedDeleteResponseDTO> {
+  ): Promise<TypeSharedDelete> {
     await this.userService.deleteUser(username);
 
     return {

@@ -6,9 +6,13 @@ import { AuthService } from './auth.service';
 
 import {
   AuthRequestDTO,
+  AuthResponseDTO,
   RegistrationRequestDTO,
   RegistrationResponseDTO,
 } from './dto';
+
+import { TypeGetUser } from '../users';
+import { TypeToken } from './types';
 
 @ApiTags('Auth')
 @Controller()
@@ -19,15 +23,15 @@ export class AuthController {
   @ApiQuery({ name: 'password', type: 'string' })
   @ApiResponse({
     status: 200,
-    description: `User authorization by JWT`,
-    type: AuthRequestDTO,
+    description: `User authorization`,
+    type: AuthResponseDTO,
   })
   @Get('/auth')
   public async authorization(
     @Query() authRequestDTO: AuthRequestDTO,
     @Res({ passthrough: true }) response: Response,
   ): Promise<void> {
-    const { token }: { token: string } = await this.authService.authorize(
+    const { token }: TypeToken = await this.authService.authorize(
       authRequestDTO,
     );
     const bearerToken = 'Bearer ' + token;
@@ -40,13 +44,13 @@ export class AuthController {
   @ApiBody({ type: RegistrationRequestDTO })
   @ApiResponse({
     status: 201,
-    description: `Return registered user`,
+    description: `User registration`,
     type: RegistrationResponseDTO,
   })
   @Post('/registration')
   public async registration(
     @Body() registrationRequestDTO: RegistrationRequestDTO,
-  ): Promise<RegistrationResponseDTO> {
+  ): Promise<TypeGetUser> {
     return await this.authService.registration(registrationRequestDTO);
   }
 }

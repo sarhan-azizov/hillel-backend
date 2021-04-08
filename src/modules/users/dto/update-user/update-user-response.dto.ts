@@ -12,7 +12,8 @@ import {
 } from 'class-validator';
 
 import { ObjectID } from 'typeorm';
-import { UserRoles } from '../read-user/read-user-response.dto';
+import { Type } from 'class-transformer';
+import { ReadUserRolesResponseDTO } from '../../../user-roles';
 
 export class UpdateUserResponseDTO {
   @ApiProperty({
@@ -68,11 +69,9 @@ export class UpdateUserResponseDTO {
 
   @ApiProperty({
     required: true,
-    default: null,
-    enum: [UserRoles.ADMIN, UserRoles.STUDENT, UserRoles.MENTOR, null],
   })
-  @IsEnum([UserRoles.ADMIN, UserRoles.STUDENT, UserRoles.MENTOR, null])
-  role = null;
+  @Type(() => ReadUserRolesResponseDTO)
+  role: ReadUserRolesResponseDTO[];
 
   @ApiProperty({ required: true, type: 'boolean' })
   @IsBoolean()

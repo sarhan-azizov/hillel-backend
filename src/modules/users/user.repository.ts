@@ -8,11 +8,17 @@ import {
   ReadUsersRequestDTO,
   ReadUserRequestDTO,
   UpdateUserRequestDTO,
-  ReadUsersResponseDTO,
 } from './dto';
+
 import { UsersAggregationInterface, UsersAggregation } from './db';
 import { caseInsensitive } from '../../shared/helpers';
-import { TypeAggregationOptions } from './types';
+import {
+  TypeAggregationOptions,
+  TypeGetUser,
+  TypeGetUsers,
+  TypeGetUserWithPassword,
+} from './types';
+import { TypeUserRole } from '../user-roles';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
@@ -28,13 +34,16 @@ export class UserRepository extends Repository<UserEntity> {
 
   public async createUser(
     createUserRequestDTO: CreateUserRequestDTO,
-  ): Promise<UserEntity> {
+    defaultUserRole: TypeUserRole,
+  ): Promise<TypeGetUser> {
     const foundUser = await this.searchUserByUsername(
       createUserRequestDTO.username,
     );
 
     if (!foundUser) {
       const createdUser = Object.assign(new UserEntity(), createUserRequestDTO);
+
+      createdUser.role = ObjectID(defaultUserRole.id);
 
       await createdUser.save();
 
@@ -49,7 +58,7 @@ export class UserRepository extends Repository<UserEntity> {
   public async getUser(
     readUserRequestDTO: ReadUserRequestDTO,
     aggregationOptions?: TypeAggregationOptions,
-  ): Promise<UserEntity> {
+  ): Promise<TypeGetUserWithPassword> {
     const foundUser = await this.usersAggregation.getUser(
       readUserRequestDTO,
       aggregationOptions,
@@ -66,11 +75,11 @@ export class UserRepository extends Repository<UserEntity> {
 
   public async getUsers(
     readUsersRequestDTO: ReadUsersRequestDTO,
-  ): Promise<ReadUsersResponseDTO> {
+  ): Promise<TypeGetUsers> {
     return await this.usersAggregation.getUsers(readUsersRequestDTO);
   }
 
-  private async searchUserByUsername(username): Promise<UserEntity> {
+  private async searchUserByUsername(username): Promise<TypeGetUser> {
     const userRepository = getMongoRepository(UserEntity);
 
     return await userRepository.findOne({
@@ -83,7 +92,7 @@ export class UserRepository extends Repository<UserEntity> {
   public async updateUser(
     username: string,
     updateUserRequestDTO: Partial<UpdateUserRequestDTO>,
-  ): Promise<UserEntity> {
+  ): Promise<TypeGetUser> {
     const userRepository = getMongoRepository(UserEntity);
 
     if (updateUserRequestDTO.role) {

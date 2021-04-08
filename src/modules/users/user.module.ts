@@ -5,12 +5,13 @@ import { UserService } from './user.service';
 import { UserRepository } from './user.repository';
 import { UserController } from './user.controller';
 
-import { UserRoleModule } from '../user-roles';
+import { UserRoleService } from '../user-roles';
+import { UserRoleRepository } from '../user-roles/user-role.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserRepository]), UserRoleModule],
+  imports: [TypeOrmModule.forFeature([UserRepository, UserRoleRepository])],
   exports: [UserService],
-  providers: [UserService],
+  providers: [UserService, UserRoleService],
   controllers: [UserController],
 })
 export class UserModule {}

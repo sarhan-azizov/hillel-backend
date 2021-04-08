@@ -1,14 +1,21 @@
 import { Repository, EntityRepository, getMongoRepository } from 'typeorm';
 
-import { UserRoleEntity } from './user-role.entity';
-import { ReadUserRolesResponseDTO } from './read-user-roles-response.dto';
+import { UserRoleEntity, UserRoles } from './user-role.entity';
+import { TypeUserRole } from './types';
 
 @EntityRepository(UserRoleEntity)
 export class UserRoleRepository extends Repository<UserRoleEntity> {
-  public async getUserRoles(): Promise<ReadUserRolesResponseDTO[]> {
+  public async getUserRoles(): Promise<TypeUserRole[]> {
     const userRoleRepository = getMongoRepository(UserRoleEntity);
-    const userRoles = await userRoleRepository.find();
 
-    return userRoles;
+    return await userRoleRepository.find();
+  }
+
+  public async getDefaultUserRole(): Promise<TypeUserRole> {
+    const userRoleRepository = getMongoRepository(UserRoleEntity);
+
+    return await userRoleRepository.findOne({
+      name: UserRoles.STUDENT,
+    });
   }
 }

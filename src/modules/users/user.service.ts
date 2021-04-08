@@ -5,29 +5,33 @@ import * as bcrypt from 'bcrypt';
 import { UserRepository } from './user.repository';
 import {
   UserChangePasswordRequestDTO,
-  UserChangePasswordResponseDTO,
   ReadUserRequestDTO,
-  ReadUserResponseWithPasswordsDTO,
   ReadUsersRequestDTO,
-  ReadUsersResponseDTO,
   UpdateUserRequestDTO,
-  UpdateUserResponseDTO,
   CreateUserRequestDTO,
-  CreateUserResponseDTO,
 } from './dto';
-import { TypeAggregationOptions } from './types';
+
+import {
+  TypeAggregationOptions,
+  TypeGetUser,
+  TypeGetUsers,
+  TypeGetUserWithPassword,
+} from './types';
+
+import { UserRoleService } from '../user-roles';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserRepository)
     private readonly userRepository: UserRepository,
+    private readonly userRoleService: UserRoleService,
   ) {}
 
   public async changePassword(
     username: string,
     userChangePasswordRequestDTO: UserChangePasswordRequestDTO,
-  ): Promise<UserChangePasswordResponseDTO> {
+  ): Promise<TypeGetUser> {
     const salt = await bcrypt.genSalt();
     const password = await bcrypt.hash(
       userChangePasswordRequestDTO.password,
@@ -39,14 +43,18 @@ export class UserService {
 
   public async createUser(
     createUserRequestDTO: CreateUserRequestDTO,
-  ): Promise<CreateUserResponseDTO> {
-    return await this.userRepository.createUser(createUserRequestDTO);
+  ): Promise<TypeGetUser> {
+    const defaultUserRole = await this.userRoleService.getDefaultUserRole();
+    return await this.userRepository.createUser(
+      createUserRequestDTO,
+      defaultUserRole,
+    );
   }
 
   public async getUser(
     readUserRequestDTO: ReadUserRequestDTO,
     aggregationOptions?: TypeAggregationOptions,
-  ): Promise<ReadUserResponseWithPasswordsDTO> {
+  ): Promise<TypeGetUserWithPassword> {
     return await this.userRepository.getUser(
       readUserRequestDTO,
       aggregationOptions,
@@ -55,14 +63,14 @@ export class UserService {
 
   public async getUsers(
     readUsersRequestDTO: ReadUsersRequestDTO,
-  ): Promise<ReadUsersResponseDTO> {
+  ): Promise<TypeGetUsers> {
     return await this.userRepository.getUsers(readUsersRequestDTO);
   }
 
   public async updateUser(
     username: string,
     updateUserRequestDTO: UpdateUserRequestDTO,
-  ): Promise<UpdateUserResponseDTO> {
+  ): Promise<TypeGetUser> {
     return await this.userRepository.updateUser(username, updateUserRequestDTO);
   }
 
