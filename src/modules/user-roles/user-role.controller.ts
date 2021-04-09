@@ -7,11 +7,12 @@ import {
 } from '@nestjs/swagger';
 
 import { AuthGuard } from '../../shared/guards/authorization.guard';
-import { UserRoles } from '../../shared/decorators/roles.decorator';
+import { UserRolesDecorator } from '../../shared/decorators/roles.decorator';
 
 import { UserRoleService } from './user-role.service';
 import { ReadUserRolesResponseDTO } from './read-user-roles-response.dto';
 import { TypeUserRole } from './types';
+import { UserRoles } from './user-role.entity';
 
 @ApiTags('User Roles')
 @UseGuards(AuthGuard)
@@ -21,7 +22,7 @@ export class UserRoleController {
 
   @ApiCookieAuth()
   @ApiBearerAuth()
-  @UserRoles('admin')
+  @UserRolesDecorator(UserRoles.ADMIN, UserRoles.MENTOR)
   @ApiResponse({
     status: 200,
     description: `Return user roles`,

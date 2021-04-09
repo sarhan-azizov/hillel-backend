@@ -22,8 +22,9 @@ import { Response, Request } from 'express';
 
 import { AuthGuard } from '../../shared/guards/authorization.guard';
 import { getVerifiedToken, removeToken } from '../../shared/helpers';
-import { UserRoles } from '../../shared/decorators/roles.decorator';
+import { UserRolesDecorator } from '../../shared/decorators/roles.decorator';
 import { UserService } from './user.service';
+import { UserRoles } from '../user-roles';
 
 import {
   UserChangePasswordRequestDTO,
@@ -72,7 +73,7 @@ export class UserController {
 
   @ApiCookieAuth()
   @ApiBearerAuth()
-  @UserRoles('admin')
+  @UserRolesDecorator(UserRoles.ADMIN, UserRoles.MENTOR)
   @ApiQuery({ required: false, name: 'activated', type: 'boolean' })
   @ApiQuery({ required: false, name: 'size', type: 'number' })
   @ApiQuery({ required: false, name: 'page', type: 'number' })
@@ -90,7 +91,7 @@ export class UserController {
 
   @ApiCookieAuth()
   @ApiBearerAuth()
-  @UserRoles('admin')
+  @UserRolesDecorator(UserRoles.ADMIN, UserRoles.MENTOR)
   @ApiResponse({
     status: 200,
     description: `Return updated user`,
@@ -107,7 +108,7 @@ export class UserController {
 
   @ApiCookieAuth()
   @ApiBearerAuth()
-  @UserRoles('admin')
+  @UserRolesDecorator(UserRoles.ADMIN, UserRoles.MENTOR)
   @ApiResponse({
     status: 200,
     description: `Return the user`,
@@ -122,7 +123,7 @@ export class UserController {
 
   @ApiCookieAuth()
   @ApiBearerAuth()
-  @UserRoles('admin')
+  @UserRolesDecorator(UserRoles.ADMIN, UserRoles.MENTOR)
   @ApiResponse({
     status: 200,
     description: `Delete user`,

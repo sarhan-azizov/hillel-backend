@@ -7,7 +7,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { ObjectID, ObjectIdColumn } from 'typeorm';
+import { ObjectID } from 'typeorm';
 
 export class UpdateUserRequestDTO {
   @ApiProperty({
