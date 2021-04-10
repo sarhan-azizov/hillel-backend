@@ -3,7 +3,6 @@ import {
   IsBoolean,
   IsDate,
   IsEmail,
-  IsEnum,
   IsMongoId,
   IsNotEmpty,
   IsString,
@@ -29,7 +28,7 @@ export class UserChangePasswordResponseDTO {
     type: String,
   })
   @IsMongoId()
-  id: ObjectID;
+  _id: ObjectID;
 
   @ApiProperty({
     required: true,

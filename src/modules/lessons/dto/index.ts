@@ -1,1 +1,2 @@
-export * from './create-lesson';
+export { CreateLessonDTO } from './create-lesson.dto';
+export { ReadLessonDTO } from './read-lesson.dto';

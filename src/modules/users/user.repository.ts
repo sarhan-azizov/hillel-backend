@@ -43,7 +43,7 @@ export class UserRepository extends Repository<UserEntity> {
     if (!foundUser) {
       const createdUser = Object.assign(new UserEntity(), createUserRequestDTO);
 
-      createdUser.role = ObjectID(defaultUserRole.id);
+      createdUser.role = ObjectID(defaultUserRole._id);
 
       await createdUser.save();
 
@@ -99,7 +99,7 @@ export class UserRepository extends Repository<UserEntity> {
       updateUserRequestDTO.role = new ObjectID(updateUserRequestDTO.role);
     }
 
-    const updatedUser = await userRepository.findOneAndUpdate(
+    const updatedUser = await userRepository.updateOne(
       { username: caseInsensitive(username) },
       {
         $set: {
@@ -109,7 +109,7 @@ export class UserRepository extends Repository<UserEntity> {
       },
     );
 
-    if (updatedUser.ok) {
+    if (updatedUser.result.ok) {
       return this.getUser({ username });
     }
   }

@@ -21,7 +21,7 @@ export class CreateUserResponseDTO {
   })
   @IsNotEmpty()
   @IsMongoId()
-  id: ObjectID;
+  _id: ObjectID;
 
   @ApiProperty({
     required: true,

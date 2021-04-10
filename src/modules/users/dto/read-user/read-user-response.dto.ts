@@ -27,7 +27,7 @@ export class ReadUserResponseDTO {
     required: true,
     type: String,
   })
-  id: ObjectID;
+  _id: ObjectID;
 
   @ApiProperty({
     required: true,

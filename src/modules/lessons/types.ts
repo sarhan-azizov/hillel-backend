@@ -7,7 +7,7 @@ export type TypeBaseLesson = {
 };
 
 export type TypeGetLesson = TypeBaseLesson & {
-  id: ObjectID;
+  _id: ObjectID;
   createdAt: Date;
   updatedAt: Date;
 };

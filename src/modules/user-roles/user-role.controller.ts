@@ -6,8 +6,7 @@ import {
   ApiCookieAuth,
 } from '@nestjs/swagger';
 
-import { AuthGuard } from '../../shared/guards/authorization.guard';
-import { UserRolesDecorator } from '../../shared/decorators/roles.decorator';
+import { AuthGuard, UserRolesDecorator } from '../../shared';
 
 import { UserRoleService } from './user-role.service';
 import { ReadUserRolesResponseDTO } from './read-user-roles-response.dto';

@@ -16,7 +16,7 @@ export default class CreateUser implements Seeder {
     const salt = await bcrypt.genSalt();
     const adminUser = {
       username: process.env.ADMIN_USER_NAME,
-      role: adminRole.id,
+      role: adminRole._id,
       firstName: 'admin',
       lastName: 'admin',
       email: process.env.ADMIN_USER_EMAIL,

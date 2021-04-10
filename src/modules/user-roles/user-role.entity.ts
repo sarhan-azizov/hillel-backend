@@ -11,7 +11,7 @@ export enum UserRoles {
 @Entity(ENTITY_NAMES.USER_ROLES)
 export class UserRoleEntity extends BaseEntity {
   @ObjectIdColumn()
-  id: ObjectID;
+  _id: ObjectID;
 
   @Column({ type: 'enum', unique: true, nullable: false })
   name: UserRoles;

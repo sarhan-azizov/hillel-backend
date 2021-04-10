@@ -16,7 +16,7 @@ import { ENTITY_NAMES } from '../../ENTITY_NAMES';
 @Entity(ENTITY_NAMES.USERS)
 export class UserEntity extends BaseEntity {
   @ObjectIdColumn()
-  id: ObjectID;
+  _id: ObjectID;
 
   @Column({ type: 'array' })
   role: [];

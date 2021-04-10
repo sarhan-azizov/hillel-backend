@@ -7,7 +7,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class CreateLessonRequestDTO {
+export class CreateLessonDTO {
   @ApiProperty({
     required: true,
     maxLength: 120,

@@ -5,7 +5,7 @@ import { TypeCreateUser, TypeGetUserWithPassword } from '../../users';
 import { TypeUserRole } from '../../user-roles';
 
 export const mockedRegisterUserRole: TypeUserRole = {
-  id: ObjectID('6027a23b3cdd5143e08f0941'),
+  _id: ObjectID('6027a23b3cdd5143e08f0941'),
   name: 'student',
 };
 
@@ -20,7 +20,7 @@ export const mockedRegisterUserRequest: TypeCreateUser = {
 };
 
 export const mockedRegisterUserResponse: TypeGetUserWithPassword = {
-  id: ObjectID('6027a23b3cdd5143e08f0941'),
+  _id: ObjectID('6027a23b3cdd5143e08f0941'),
   username: 'Randy_Dietrich95',
   firstName: 'Juwan',
   lastName: 'Wyman',

@@ -14,7 +14,7 @@ export class ReadUserRolesResponseDTO {
     type: String,
   })
   @IsMongoId()
-  id: ObjectID;
+  _id: ObjectID;
 
   @ApiProperty({
     required: true,

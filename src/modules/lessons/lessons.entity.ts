@@ -15,7 +15,7 @@ import { ENTITY_NAMES } from '../../ENTITY_NAMES';
 @Entity(ENTITY_NAMES.LESSONS)
 export class LessonsEntity extends BaseEntity {
   @ObjectIdColumn()
-  id: ObjectID;
+  _id: ObjectID;
 
   @Column({ type: 'string', unique: true, length: 120, nullable: false })
   name: string;

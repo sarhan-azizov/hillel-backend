@@ -22,7 +22,7 @@ export class RegistrationResponseDTO {
   })
   @IsNotEmpty()
   @IsMongoId()
-  id: ObjectID;
+  _id: ObjectID;
 
   @ApiProperty({
     required: true,

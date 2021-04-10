@@ -19,7 +19,7 @@ export type TypeUserWithPassword = TypeBaseUser & {
 };
 
 export type TypeGetUser = TypeBaseUser & {
-  id: ObjectID;
+  _id: ObjectID;
   role: TypeUserRole[];
   createdAt: Date;
   updatedAt: Date;

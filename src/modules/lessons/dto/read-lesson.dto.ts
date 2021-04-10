@@ -12,14 +12,14 @@ import {
 
 import { ObjectID } from 'typeorm';
 
-export class CreateLessonResponseDTO {
+export class ReadLessonDTO {
   @ApiProperty({
     required: true,
     type: String,
   })
   @IsNotEmpty()
   @IsMongoId()
-  id: ObjectID;
+  _id: ObjectID;
 
   @ApiProperty({
     required: true,

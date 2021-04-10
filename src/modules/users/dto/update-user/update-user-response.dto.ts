@@ -21,7 +21,7 @@ export class UpdateUserResponseDTO {
     type: String,
   })
   @IsMongoId()
-  id: ObjectID;
+  _id: ObjectID;
 
   @ApiProperty({
     required: true,
