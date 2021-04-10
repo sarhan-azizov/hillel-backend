@@ -1,4 +1,5 @@
 export const ENTITY_NAMES = {
+  LESSONS: 'LESSONS',
   USER_ROLES: 'USER_ROLES',
   USERS: 'USERS',
   GROUPS: 'GROUPS',

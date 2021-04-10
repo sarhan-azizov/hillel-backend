@@ -2,7 +2,13 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 
-import { UserModule, AuthModule, GroupModule, UserRoleModule } from './modules';
+import {
+  UserModule,
+  AuthModule,
+  GroupModule,
+  UserRoleModule,
+  LessonsModule,
+} from './modules';
 
 @Module({
   imports: [
@@ -11,6 +17,7 @@ import { UserModule, AuthModule, GroupModule, UserRoleModule } from './modules';
     AuthModule,
     GroupModule,
     UserRoleModule,
+    LessonsModule,
   ],
   controllers: [],
   providers: [],
