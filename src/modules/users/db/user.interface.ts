@@ -1,15 +1,19 @@
-import { UserParams } from './types';
 import {
   TypeAggregationOptions,
-  TypeGetUsers,
   TypeGetUserWithPassword,
+  TypeGetUser,
 } from '../types';
+
+import { TypeSharedGetList } from '../../../shared';
+import { ReadUsersRequestDTO } from '../dto';
 
 export interface UsersAggregationInterface {
   getUser(
-    params: UserParams,
+    params: { username: string },
     aggregationOptions: TypeAggregationOptions,
   ): Promise<TypeGetUserWithPassword>;
 
-  getUsers(params: UserParams): Promise<TypeGetUsers>;
+  getUsers(
+    params: ReadUsersRequestDTO,
+  ): Promise<TypeSharedGetList<TypeGetUser>>;
 }

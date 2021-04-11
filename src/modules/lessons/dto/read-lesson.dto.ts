@@ -3,7 +3,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsDate,
-  IsMongoId,
   IsNotEmpty,
   IsString,
   MaxLength,
@@ -18,7 +17,6 @@ export class ReadLessonDTO {
     type: String,
   })
   @IsNotEmpty()
-  @IsMongoId()
   _id: ObjectID;
 
   @ApiProperty({

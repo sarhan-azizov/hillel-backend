@@ -14,9 +14,10 @@ import {
 import {
   TypeAggregationOptions,
   TypeGetUser,
-  TypeGetUsers,
   TypeGetUserWithPassword,
 } from './types';
+
+import { TypeSharedGetList } from '../../shared';
 
 import { UserRoleService } from '../user-roles';
 
@@ -63,7 +64,7 @@ export class UserService {
 
   public async getUsers(
     readUsersRequestDTO: ReadUsersRequestDTO,
-  ): Promise<TypeGetUsers> {
+  ): Promise<TypeSharedGetList<TypeGetUser>> {
     return await this.userRepository.getUsers(readUsersRequestDTO);
   }
 

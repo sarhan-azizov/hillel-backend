@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
-import { CreateLessonDTO } from './dto';
-import { TypeGetLesson } from './types';
-import { LessonsRepository } from './lessons.repository';
 import { ObjectID } from 'typeorm';
+
+import { LessonsRepository } from './lessons.repository';
+import { CreateLessonDTO, ReadLessonsRequestDTO } from './dto';
+import { TypeGetLesson } from './types';
+import { TypeSharedGetList } from '../../shared';
 
 @Injectable()
 export class LessonsService {
@@ -21,6 +22,12 @@ export class LessonsService {
 
   public async getLesson(lessonId: ObjectID): Promise<TypeGetLesson> {
     return await this.lessonsRepository.getLesson(lessonId);
+  }
+
+  public async getLessons(
+    readLessonsRequestDTO: ReadLessonsRequestDTO,
+  ): Promise<TypeSharedGetList<TypeGetLesson>> {
+    return await this.lessonsRepository.getLessons(readLessonsRequestDTO);
   }
 
   public async updateLesson(

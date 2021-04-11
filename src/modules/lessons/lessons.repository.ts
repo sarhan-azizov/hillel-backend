@@ -5,15 +5,26 @@ import {
   ObjectID,
   Repository,
 } from 'typeorm';
-
 import { ObjectID as toMongoObjectID } from 'mongodb';
 
 import { LessonsEntity } from './lessons.entity';
-import { CreateLessonDTO } from './dto';
+import { LessonsAggregation, LessonsAggregationInterface } from './db';
+import { CreateLessonDTO, ReadLessonsRequestDTO } from './dto';
 import { TypeGetLesson } from './types';
+import { TypeSharedGetList } from '../../shared';
 
 @EntityRepository(LessonsEntity)
 export class LessonsRepository extends Repository<LessonsEntity> {
+  readonly lessonsAggregation: LessonsAggregationInterface;
+
+  constructor() {
+    super();
+
+    this.lessonsAggregation = new LessonsAggregation(
+      getMongoRepository(LessonsEntity),
+    );
+  }
+
   public async createLesson(
     createLessonDTO: CreateLessonDTO,
   ): Promise<TypeGetLesson> {
@@ -38,6 +49,12 @@ export class LessonsRepository extends Repository<LessonsEntity> {
     return await getMongoRepository(LessonsEntity).findOne({
       _id: new toMongoObjectID(lessonId),
     });
+  }
+
+  public async getLessons(
+    readLessonsRequestDTO: ReadLessonsRequestDTO,
+  ): Promise<TypeSharedGetList<TypeGetLesson>> {
+    return await this.lessonsAggregation.getLessons(readLessonsRequestDTO);
   }
 
   public async updateLesson(

@@ -35,8 +35,8 @@ import {
   UpdateUserResponseDTO,
 } from './dto';
 
-import { TypeSharedDelete } from '../../shared';
-import { TypeGetUser, TypeGetUsers } from './types';
+import { TypeSharedDelete, TypeSharedGetList } from '../../shared';
+import { TypeGetUser } from './types';
 
 @ApiTags('Users')
 @UseGuards(AuthGuard)
@@ -85,7 +85,7 @@ export class UserController {
   @Get()
   public async getUsers(
     @Query() readUsersRequestDTO: ReadUsersRequestDTO,
-  ): Promise<TypeGetUsers> {
+  ): Promise<TypeSharedGetList<TypeGetUser>> {
     return await this.userService.getUsers(readUsersRequestDTO);
   }
 

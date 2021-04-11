@@ -8,18 +8,30 @@ import {
   Patch,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
   ApiCookieAuth,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 
-import { AuthGuard, TypeSharedDelete, UserRolesDecorator } from '../../shared';
+import {
+  AuthGuard,
+  TypeSharedDelete,
+  TypeSharedGetList,
+  UserRolesDecorator,
+} from '../../shared';
 import { UserRoles } from '../user-roles';
-import { CreateLessonDTO, ReadLessonDTO } from './dto';
+import {
+  CreateLessonDTO,
+  ReadLessonDTO,
+  ReadLessonsResponseDTO,
+  ReadLessonsRequestDTO,
+} from './dto';
 import { TypeGetLesson } from './types';
 import { ObjectID } from 'typeorm';
 
@@ -44,9 +56,9 @@ export class LessonsController {
     return await this.lessonsService.createLesson(createLessonDTO);
   }
 
-  // @ApiCookieAuth()
-  // @ApiBearerAuth()
-  // @UserRolesDecorator(UserRoles.ADMIN, UserRoles.MENTOR)
+  @ApiCookieAuth()
+  @ApiBearerAuth()
+  @UserRolesDecorator(UserRoles.ADMIN, UserRoles.MENTOR)
   @ApiResponse({
     status: 200,
     description: `Return lesson`,
@@ -59,9 +71,27 @@ export class LessonsController {
     return await this.lessonsService.getLesson(lessonId);
   }
 
-  // @ApiCookieAuth()
-  // @ApiBearerAuth()
-  // @UserRolesDecorator(UserRoles.ADMIN, UserRoles.MENTOR)
+  @ApiCookieAuth()
+  @ApiBearerAuth()
+  @UserRolesDecorator(UserRoles.ADMIN, UserRoles.MENTOR)
+  @ApiQuery({ required: false, name: 'activated', type: 'boolean' })
+  @ApiQuery({ required: false, name: 'size', type: 'number' })
+  @ApiQuery({ required: false, name: 'page', type: 'number' })
+  @ApiResponse({
+    status: 200,
+    description: `Return lessons`,
+    type: ReadLessonsResponseDTO,
+  })
+  @Get()
+  public async geLessons(
+    @Query() readLessonsRequestDTO: ReadLessonsRequestDTO,
+  ): Promise<TypeSharedGetList<TypeGetLesson>> {
+    return await this.lessonsService.getLessons(readLessonsRequestDTO);
+  }
+
+  @ApiCookieAuth()
+  @ApiBearerAuth()
+  @UserRolesDecorator(UserRoles.ADMIN, UserRoles.MENTOR)
   @ApiResponse({
     status: 200,
     description: `Return updated lesson`,
@@ -76,9 +106,9 @@ export class LessonsController {
     return await this.lessonsService.updateLesson(lessonId, createLessonDTO);
   }
 
-  // @ApiCookieAuth()
-  // @ApiBearerAuth()
-  // @UserRolesDecorator(UserRoles.ADMIN, UserRoles.MENTOR)
+  @ApiCookieAuth()
+  @ApiBearerAuth()
+  @UserRolesDecorator(UserRoles.ADMIN, UserRoles.MENTOR)
   @ApiResponse({
     status: 200,
     description: `Return lesson`,

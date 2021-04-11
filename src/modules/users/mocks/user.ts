@@ -1,9 +1,10 @@
 import { ObjectID } from 'mongodb';
 import {
   TypeUserWithPassword,
-  TypeGetUsers,
   TypeGetUserWithPassword,
+  TypeGetUser,
 } from '../types';
+import { TypeSharedGetList } from '../../../shared';
 
 import { TypeUserRole } from '../../user-roles';
 
@@ -34,7 +35,7 @@ export const mockedUserRequest: TypeUserWithPassword = {
   activated: true,
 };
 
-export const mockedUsersResponse: TypeGetUsers = {
+export const mockedUsersResponse: TypeSharedGetList<TypeGetUser> = {
   result: [
     {
       _id: ObjectID('6027a23b3cdd5143e08f0941'),

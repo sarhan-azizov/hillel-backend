@@ -15,10 +15,10 @@ import { caseInsensitive } from '../../shared/helpers';
 import {
   TypeAggregationOptions,
   TypeGetUser,
-  TypeGetUsers,
   TypeGetUserWithPassword,
 } from './types';
 import { TypeUserRole } from '../user-roles';
+import { TypeSharedGetList } from '../../shared';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
@@ -75,7 +75,7 @@ export class UserRepository extends Repository<UserEntity> {
 
   public async getUsers(
     readUsersRequestDTO: ReadUsersRequestDTO,
-  ): Promise<TypeGetUsers> {
+  ): Promise<TypeSharedGetList<TypeGetUser>> {
     return await this.usersAggregation.getUsers(readUsersRequestDTO);
   }
 

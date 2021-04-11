@@ -5,14 +5,14 @@ import { plainToClass } from 'class-transformer';
 import { ENTITY_NAMES } from '../../../ENTITY_NAMES';
 import { UserEntity } from '../user.entity';
 import { UsersAggregationInterface } from './user.interface';
-import { UserParams, UserQueryParams } from './types';
-import { ReadUsersResponseDTO } from '../dto';
+import { ReadUsersRequestDTO, ReadUsersResponseDTO } from '../dto';
 import { caseInsensitive } from '../../../shared/helpers';
 import {
   TypeAggregationOptions,
-  TypeGetUsers,
+  TypeGetUser,
   TypeGetUserWithPassword,
 } from '../types';
+import { TypeSharedGetList } from '../../../shared';
 
 export class UsersAggregation implements UsersAggregationInterface {
   private userRepository: MongoRepository<UserEntity>;
@@ -29,7 +29,10 @@ export class UsersAggregation implements UsersAggregationInterface {
     this.userRepository = userRepository;
   }
 
-  private getAggregatedUsersResponse(aggregatedResult, params): TypeGetUsers {
+  private getAggregatedUsersResponse(
+    aggregatedResult,
+    params,
+  ): TypeSharedGetList<TypeGetUser> {
     const aggregatedUsers = aggregatedResult.length
       ? aggregatedResult[0]
       : { result: [], total: [{ total: 0 }], page: 0, size: 10 };
@@ -46,7 +49,7 @@ export class UsersAggregation implements UsersAggregationInterface {
     page = 1,
     size = 10,
     activated,
-  }: UserQueryParams = {}): Promise<TypeGetUsers> {
+  }: ReadUsersRequestDTO = {}): Promise<TypeSharedGetList<TypeGetUser>> {
     const $skip = size * (page - 1);
     const $limit = size + $skip;
 
@@ -76,7 +79,7 @@ export class UsersAggregation implements UsersAggregationInterface {
   }
 
   private async getAggregatedUser(
-    params: UserParams,
+    params: { username: string },
     aggregationOptions: TypeAggregationOptions,
   ): Promise<TypeGetUserWithPassword> {
     const aggregation = [
@@ -103,7 +106,7 @@ export class UsersAggregation implements UsersAggregationInterface {
   }
 
   public async getUser(
-    params: UserParams,
+    params: { username: string },
     aggregationOptions: TypeAggregationOptions,
   ): Promise<TypeGetUserWithPassword> {
     if (!params.username) {
@@ -113,7 +116,9 @@ export class UsersAggregation implements UsersAggregationInterface {
     return await this.getAggregatedUser(params, aggregationOptions);
   }
 
-  public async getUsers(params: UserQueryParams): Promise<TypeGetUsers> {
+  public async getUsers(
+    params: ReadUsersRequestDTO,
+  ): Promise<TypeSharedGetList<TypeGetUser>> {
     const users = await this.getAggregatedUsers(params);
 
     const errors = await validate(plainToClass(ReadUsersResponseDTO, users));

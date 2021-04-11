@@ -27,13 +27,6 @@ export type TypeGetUser = TypeBaseUser & {
 
 export type TypeGetUserWithPassword = TypeUserWithPassword & TypeGetUser;
 
-export type TypeGetUsers = {
-  result: TypeGetUser[];
-  total: number;
-  page: number;
-  size: number;
-};
-
 export type TypeAggregationOptions = {
   withPassword: boolean;
 };
