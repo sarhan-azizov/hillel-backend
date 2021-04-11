@@ -64,7 +64,7 @@ export class LessonsRepository extends Repository<LessonsEntity> {
     const lessonRepository = getMongoRepository(LessonsEntity);
 
     const updatedLesson = await lessonRepository.updateOne(
-      { _id: new toMongoObjectID() },
+      { _id: new toMongoObjectID(lessonId) },
       {
         $set: {
           ...createLessonDTO,
