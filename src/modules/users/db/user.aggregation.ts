@@ -55,7 +55,7 @@ export class UsersAggregation implements UsersAggregationInterface {
 
     const aggregationResult = [
       { $match: { activated } },
-      { $sort: { username: 1 } },
+      { $sort: { createdAt: -1 } },
       this.joinRolesToUsers,
       { $limit },
       { $skip },

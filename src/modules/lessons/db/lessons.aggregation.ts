@@ -45,7 +45,7 @@ export class LessonsAggregation implements LessonsAggregationInterface {
 
     const aggregationResult = [
       { $match: { activated } },
-      { $sort: { username: 1 } },
+      { $sort: { createdAt: -1 } },
       { $limit },
       { $skip },
     ];
